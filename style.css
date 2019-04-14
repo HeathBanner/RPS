@@ -1,0 +1,151 @@
+body{
+    background-image: url(imgs/gaming.png);
+    font-family: 'Righteous', cursive;
+}
+
+#rpsHeader{
+    text-align: center;
+    color: #565656;
+}
+
+#logo{
+    display: block;
+    margin: 0 auto;
+    height: 200px;
+    width: 200px;
+}
+
+.scoreDiv {
+    text-align: center;
+}
+
+.p1ScoreDiv {
+    display: inline-block;
+    text-align: center;
+    border: solid 1px black;
+    border-radius: 5px;
+    padding: 10px;
+    background: red;
+    width: 35%;
+}
+
+.p2ScoreDiv {
+    display: inline-block;
+    text-align: center;
+    border: solid 1px black;
+    border-radius: 5px;
+    background: #939393;
+    padding: 10px;
+    width: 35%;
+}
+
+.tiesScoreDiv {
+    text-align: center;
+    border: solid 1px black;
+    border-radius: 5px;
+    background: yellow;
+    padding: 10px;
+    display: inline-block;
+    margin: 0px 10px;
+}
+
+.p1ChoiceDiv {
+    display: inline-block;
+    border: solid 1px black;
+    border-radius: 5px;
+    background: red;
+    padding: 10px;
+    margin: 20px 10px 0px 0px;
+    min-height: 100px;
+}
+
+.p2ChoiceDiv {
+    display: inline-block;
+    border: solid 1px black;
+    border-radius: 5px;
+    background: #939393;
+    padding: 10px;
+    margin: 20px 0px 0px 0px;
+    min-height: 100px;
+}
+
+#loginDiv {
+    margin: 0 auto;
+    padding: 20px;
+}
+
+#login {
+    border-radius: 5px;
+}
+
+#submit {
+    border: none;
+    background: lightgray;
+    font-weight: bold;
+}
+
+#chatDiv{
+    margin-bottom: 20px;
+    border: solid 4px black;
+    border-radius: 5px;
+    background-image: url(imgs/skulls.png);
+    font-family: 'IBM Plex Mono', monospace;
+}
+
+#inputDiv {
+    width: 100%;
+    border-top: solid 2px black;
+    padding: 10px 15px;
+    background-image: url(imgs/weave.png);
+}
+
+#chatInput {
+    width: 83.5%;
+}
+
+#chatSubmit {
+    width: 13.5%;
+    text-align: center;
+}
+
+.seatWarmer {
+    min-height: 38px;
+    min-width: 100%;
+    margin: 0px 10px;
+}
+
+#outer {
+    width: 100%;
+    text-align: center;
+}
+
+#btnTarget{
+    display: inline-block;
+    margin: 40px;
+}
+
+#rock {
+    height: 100px;
+    width: 100px;
+    margin: 20px;
+}
+
+#paper {
+    height: 100px;
+    width: 100px;
+    margin: 20px;
+}
+
+#scissor {
+    height: 100px;
+    width: 100px;
+    margin: 20px;
+}
+
+@media (max-width: 576px) {
+    .p2ChoiceDiv{
+        margin: 20px 10px 0px 0px;
+    }
+}
+
+

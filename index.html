@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://www.gstatic.com/firebasejs/5.9.3/firebase.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Righteous" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="shortcut icon" type="image/png" href="imgs/favicon.png"/>
+    <title>RPS</title>
+</head>
+
+<body>
+    
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 id="rpsHeader">Rock Paper Scissors</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <img src="imgs/rpsLogo.png" alt="logo" id="logo">
+            </div>
+            <div id="loginDiv">
+                <input type="text" id="login" placeholder="Type your username...">
+                <button id="submit">Login</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6 scoreDiv">
+                <div class="p1ScoreDiv">
+                    <h2 id="p1ScoreHead" class="p1ScoreHead">Player 1 Score</h2>
+                        <span id="p1Score" class="p1Score">0</span>
+                </div>
+                
+                <div class="tiesScoreDiv">
+                    <h2 class="tiesHead">Ties</h2>
+                        <span id="ties" class="tiesScore">0</span>
+                </div>
+
+                <div class="p2ScoreDiv">
+                    <h2 id="p2ScoreHead" class="p2ScoreHead">Player 2 Score</h2>
+                        <span id="p2Score" class="p2Score">0</span>
+                </div>
+            
+        
+                <div class="chooseDiv">
+                    <div class="p1ChoiceDiv">
+                        <h4 id="p1Chooses" class="p1Chooses">Player 1 Chooses!</h4>
+                            <h3 id="p1Choice" class="p1Choice"></h3>
+                    </div>
+
+                    <div class="p2ChoiceDiv">
+                        <h4 id="p2Chooses" class="p2Chooses">Player 2 Chooses!</h4>
+                            <h3 id="p2Choice" class="p2Choice"></h3>
+                    </div>
+                </div>
+            <div>
+                <div id="outer">
+                    <div id="btnTarget"></div>
+                </div>
+            </div>
+            </div>
+            <div class="col-lg-6 col-md-12 col-sm-12 col-12 mediaQ">
+                <div id="chatDiv">
+                    <p id="chat1" class="seatWarmer"></p>
+                    <p id="chat2" class="seatWarmer"></p>
+                    <p id="chat3" class="seatWarmer"></p>
+                    <p id="chat4" class="seatWarmer"></p>
+                    <p id="chat5" class="seatWarmer"></p>
+                
+                <div id="inputDiv">
+                    <input type="text" id="chatInput">
+                    <button id="chatSubmit">Send</button>
+                </div>
+            </div>
+            </div>
+        </div>
+        </div>
+    </div>
+    
+    <script src="logic.js"></script>
+
+</body>
+</html>
