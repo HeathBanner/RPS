@@ -79,6 +79,10 @@ $("#submit").on("click", function() {
     $("#btnTarget").append('<img src="imgs/rock.png" id="rock" class="btns" value="rock" alt="rock">')
     $("#btnTarget").append('<img src="imgs/paper.png" id="paper" class="btns" value="paper" alt="paper">')
     $("#btnTarget").append('<img src="imgs/scissor.png" id="scissor" class="btns" value="scissor" alt="scissor">')
+
+    $("#chatSubmit").css({
+        visibility: 'visible',
+    })
 })
 
 database.ref('users').on('child_added', function(data){

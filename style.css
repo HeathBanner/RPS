@@ -106,6 +106,7 @@ body{
 #chatSubmit {
     width: 13.5%;
     text-align: center;
+    visibility: hidden;
 }
 
 .seatWarmer {
