@@ -142,6 +142,10 @@ body{
     margin: 20px;
 }
 
+#notification {
+    margin: 40px;
+}
+
 @media (max-width: 576px) {
     .p2ChoiceDiv{
         margin: 20px 10px 0px 0px;

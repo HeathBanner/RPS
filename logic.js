@@ -13,6 +13,8 @@ var database = firebase.database();
 
 //=========================================================//
 
+
+
 var username =  'username1'
 var flagCount = 0
 var users = []
@@ -35,7 +37,7 @@ database.ref('chatLog').update({
 //=========================================================//
 
 if (localStorage.getItem('user')) {
-    $("#login").val(localStorage.getItem('user'))
+    $("#loginInput").val(localStorage.getItem('user'))
 }
 
 var connectedRef = firebase.database().ref('.info/connected');
@@ -150,6 +152,12 @@ $(document).ready($(document).on("click", ".btns", function(){
             database.ref('users').update({
                 [user]: false
             })
+
+            $("#btnTarget").css({
+                display: 'none',
+            })
+
+            $("#chosen").text("Waiting for other player's choice!")
         }
     })
 }))
@@ -180,6 +188,12 @@ database.ref('choices').on('child_added', function(data){
         setTimeout(function(){
             $("#" + playerOne + "Choice").text("")
             $("#" + playerTwo + "Choice").text("") 
+            $("#btnTarget").css({
+                display: 'block',
+            })
+
+            $("#chosen").text("")
+
             database.ref('choices').remove()
             playerOneChoice = ''
             playerTwoChoice = ''
@@ -194,40 +208,41 @@ database.ref('choices').on('child_added', function(data){
 })
 
 function rpsRules() {
+    console.log("RPSRULES")
     
-    if ((playerOneChoice == 'rock') && (playerTwoChoice == 'rock')) {
+    if ((playerOneChoice == 'ROCK') && (playerTwoChoice == 'ROCK')) {
         ties++
         $("#ties").text(ties)
         
-    }else if ((playerOneChoice == 'paper') && (playerTwoChoice == 'paper')) {
+    }else if ((playerOneChoice == 'PAPER') && (playerTwoChoice == 'PAPER')) {
         ties++
         $("#ties").text(ties)
 
-    }else if ((playerOneChoice == 'scissor') && (playerTwoChoice == 'scissor')) {
+    }else if ((playerOneChoice == 'SCISSOR') && (playerTwoChoice == 'SCISSOR')) {
         ties++
         $("#ties").text(ties)
 
-    }else if ((playerOneChoice == 'rock') && (playerTwoChoice == 'scissor')) {
+    }else if ((playerOneChoice == 'ROCK') && (playerTwoChoice == 'SCISSOR')) {
         playerOneWins++
         $("#" + playerOne + "Score").text(playerOneWins)
 
-    }else if ((playerOneChoice == 'scissor') && (playerTwoChoice == 'paper')) {
+    }else if ((playerOneChoice == 'SCISSOR') && (playerTwoChoice == 'PAPER')) {
         playerOneWins++
         $("#" + playerOne + "Score").text(playerOneWins)
 
-    }else if ((playerOneChoice == 'paper') && (playerTwoChoice == 'rock')) {
+    }else if ((playerOneChoice == 'PAPER') && (playerTwoChoice == 'ROCK')) {
         playerOneWins++
         $("#" + playerOne + "Score").text(playerOneWins)
 
-    }else if ((playerOneChoice == 'scissor') && (playerTwoChoice == 'rock')) {
+    }else if ((playerOneChoice == 'SCISSOR') && (playerTwoChoice == 'ROCK')) {
         playerTwoWins++
         $("#" + playerTwo + "Score").text(playerTwoWins)
 
-    }else if ((playerOneChoice == 'rock') && (playerTwoChoice == 'paper')) {
+    }else if ((playerOneChoice == 'ROCK') && (playerTwoChoice == 'PAPER')) {
         playerTwoWins++
         $("#" + playerTwo + "Score").text(playerTwoWins)
 
-    }else if ((playerOneChoice == 'paper') && (playerTwoChoice == 'scissor')) {
+    }else if ((playerOneChoice == 'PAPER') && (playerTwoChoice == 'SCISSOR')) {
         playerTwoWins++
         $("#" + playerTwo + "Score").text(playerTwoWins)
     }
