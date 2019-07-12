@@ -17,21 +17,28 @@
     
     <div class="container-fluid">
         <div class="row">
+
             <div class="col-lg-12">
                 <h1 id="rpsHeader">Rock Paper Scissors</h1>
             </div>
+
         </div>
         <div class="row">
+
             <div class="col-lg-12">
                 <img src="imgs/rpsLogo.png" alt="logo" id="logo">
             </div>
+
             <div id="loginDiv">
                 <input type="text" id="login" placeholder="Type your username...">
                 <button id="submit">Login</button>
+                <h6 id="loginWarning"></h6>
             </div>
+
         </div>
         <div class="row">
-            <div class="col-lg-6 scoreDiv">
+
+            <div class="col-12 scoreDiv">
                 <div class="p1ScoreDiv">
                     <h2 id="p1ScoreHead" class="p1ScoreHead">Player 1 Score</h2>
                         <span id="p1Score" class="p1Score">0</span>
@@ -49,40 +56,52 @@
             
         
                 <div class="chooseDiv">
+
                     <div class="p1ChoiceDiv">
                         <h4 id="p1Chooses" class="p1Chooses">Player 1 Chooses!</h4>
-                            <h3 id="p1Choice" class="p1Choice"></h3>
+                        <h3 id="p1Choice" class="p1Choice"></h3>
+                        <img class="playerChoosing" src="imgs/rpsLogo.png" alt="Player One Choosing">
                     </div>
 
                     <div class="p2ChoiceDiv">
                         <h4 id="p2Chooses" class="p2Chooses">Player 2 Chooses!</h4>
-                            <h3 id="p2Choice" class="p2Choice"></h3>
+                        <h3 id="p2Choice" class="p2Choice"></h3>
+                        <img class="playerChoosing" src="imgs/rpsLogo.png" alt="Player Two Choosing">
                     </div>
+
                 </div>
-            <div>
-                <div id="outer">
-                    <div id="btnTarget"></div>
-                    <div id="notification">
-                        <h1 id="chosen"></h1>
+
+                <div>
+
+                    <div id="outer">
+
+                        <div id="btnTarget"></div>
+                        <div id="notification">
+                            <h1 id="chosen"></h1>
+                        </div>
+
                     </div>
+                    
                 </div>
             </div>
-            </div>
-            <div class="col-lg-6 col-md-12 col-sm-12 col-12 mediaQ">
+
+            <div class="mediaQ">
+
                 <div id="chatDiv">
                     <p id="chat1" class="seatWarmer"></p>
                     <p id="chat2" class="seatWarmer"></p>
                     <p id="chat3" class="seatWarmer"></p>
                     <p id="chat4" class="seatWarmer"></p>
                     <p id="chat5" class="seatWarmer"></p>
-                
-                <div id="inputDiv">
-                    <input type="text" id="chatInput">
-                    <button id="chatSubmit">Send</button>
+
+                    <div id="inputDiv">
+                        <input type="text" id="chatInput">
+                        <button id="chatSubmit">Send</button>
+                    </div>
+
                 </div>
             </div>
-            </div>
-        </div>
+
         </div>
     </div>
     
