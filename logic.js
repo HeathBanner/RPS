@@ -1,41 +1,166 @@
 
-
 const config = {
     apiKey: "AIzaSyAJS4YQWU5DmESeYueG1qH1NGkjv3DncEY",
     authDomain: "fir-click-counter-7cdb9.firebaseapp.com",
     databaseURL: "https://rpsapp-a5bc6.firebaseio.com/",
-    storageBucket: "fir-click-counter-7cdb9.appspot.com"
+    projectId: 'rpsapp-a5bc6'
 };
   
 firebase.initializeApp(config);
 
-const database = firebase.database();
+const database = firebase.firestore();
 
-const dbRef = database.ref();
-const connectedRef = firebase.database().ref('.info/connected');
-const usersRef = database.ref('users');
-const choicesRef = database.ref('choices');
-const chatRef = database.ref('chatLog');
+const usersRef = database.collection('users');
+const publicRef = database.collection('publicLobbies');
+const privateRef = database.collection('privateLobbies');
+
+const addPrivateListener = (name) => {
+
+    privateRef.doc(name).onSnapshot((snap) => {
+        
+        let info = snap.data();
+
+        let playerOneChoice = info.choices.playerOne.choice;
+        let playerTwoChoice = info.choices.playerTwo.choice;
+
+
+        const users = {
+            playerOne: info.playerOne,
+            playerTwo: info.playerTwo
+        };
+
+        if((!info.p1Active)&&(info.playerOne)) {
+
+            playerJoin(info);
+            privateRef.doc(name).update({
+                p1Active: true
+            });
+        }
+        if((!info.p2Active)&&(info.playerTwo)) {
+
+            playerJoin(info);
+            privateRef.doc(name).update({
+                p2Active: true
+            });
+        }
+        console.log(info);
+        isChoosing(info);
+
+        if((playerOneChoice)&&(playerTwoChoice)) {
+        
+            $(`.p1Choice`).attr('src', `./imgs/${playerOneChoice.toLowerCase()}.png`);
+            $('.p1Choice').toggleClass('playerChoice');
+    
+            $(`.p2Choice`).attr('src', `./imgs/${playerTwoChoice.toLowerCase()}.png`);
+            $('.p2Choice').toggleClass('playerChoice');
+    
+            $('#p1Choosing').css({display: 'none'});
+            $('#p2Choosing').css({display: 'none'});
+            
+            setTimeout(() => {
+                rpsRules(playerOneChoice, playerTwoChoice, users);
+            }, 1000);
+        
+            setTimeout(() => {
+                
+                $(`.p1Choice`).attr('src', ``);
+                $('.p1Choice').toggleClass('playerChoice');
+    
+                $(`.p2Choice`).attr('src', ``);
+                $('.p2Choice').toggleClass('playerChoice');
+    
+                $('#p1Choosing').css({display: 'inline-block'});
+                $('#p2Choosing').css({display: 'inline-block'});
+    
+                $("#chosen").text('');
+                
+                $(`#btnTarget`).css({display: 'block'});
+    
+                    privateRef.doc(name).update({
+                        'choices.playerOne': {choice: '', isChoosing: true},
+                        'choices.playerTwo': {choice: '', isChoosing: true}
+                    });
+            }, 5000)
+        }
+    });   
+};
+
+const addPublicListener = (name) => {
+
+    publicRef.doc(name).onSnapshot((snap) => {
+        
+        let info = snap.data();
+
+        let playerOneChoice = info.choices.playerOne.choice;
+        let playerTwoChoice = info.choices.playerTwo.choice;
+
+
+        const users = {
+            playerOne: info.playerOne,
+            playerTwo: info.playerTwo
+        };
+
+        if((!info.p1Active)&&(info.playerOne)) {
+
+            playerJoin(info);
+            publicRef.doc(name).update({
+                p1Active: true
+            });
+        }
+        if((!info.p2Active)&&(info.playerTwo)) {
+
+            playerJoin(info);
+            publicRef.doc(name).update({
+                p2Active: true
+            });
+        }
+        console.log(info);
+        isChoosing(info);
+
+        if((playerOneChoice)&&(playerTwoChoice)) {
+        
+            $(`.p1Choice`).attr('src', `./imgs/${playerOneChoice.toLowerCase()}.png`);
+            $('.p1Choice').toggleClass('playerChoice');
+    
+            $(`.p2Choice`).attr('src', `./imgs/${playerTwoChoice.toLowerCase()}.png`);
+            $('.p2Choice').toggleClass('playerChoice');
+    
+            $('#p1Choosing').css({display: 'none'});
+            $('#p2Choosing').css({display: 'none'});
+            
+            setTimeout(() => {
+                rpsRules(playerOneChoice, playerTwoChoice, users);
+            }, 1000);
+        
+            setTimeout(() => {
+                
+                $(`.p1Choice`).attr('src', ``);
+                $('.p1Choice').toggleClass('playerChoice');
+    
+                $(`.p2Choice`).attr('src', ``);
+                $('.p2Choice').toggleClass('playerChoice');
+    
+                $('#p1Choosing').css({display: 'inline-block'});
+                $('#p2Choosing').css({display: 'inline-block'});
+    
+                $("#chosen").text('');
+                
+                $(`#btnTarget`).css({display: 'block'});
+    
+                    publicRef.doc(name).update({
+                        'choices.playerOne': {choice: '', isChoosing: true},
+                        'choices.playerTwo': {choice: '', isChoosing: true}
+                    });
+            }, 5000)
+        }
+    });   
+};  
 
 //=========================================================//
-
-var username =  'username1'
-var users = []
-var playerOne = ""
-var playerTwo = ""
-
-var playerOneChoice = 0
-var playerTwoChoice = 0
 
 var ties = 0
 var playerOneWins = 0
 var playerTwoWins = 0
-
-var chatLogCount = 0
-var chatLog = []
-chatRef.update({
-    logCount: 1,
-})
 
 //=========================================================//
 
@@ -43,233 +168,414 @@ if (localStorage.getItem('user')) {
     $("#login").val(localStorage.getItem('user'))
 }
 
-connectedRef.on('value', function() {
-    dbRef.onDisconnect().remove()
-})
-
-dbRef.on('value', function(snap){
-    
-    if (!snap.val()){location.reload()}
-
-    else {console.log("Not yet...")}
-})
-
-$("#submit").on("click", function() {
+$(document).on("click", '#submitLogin', () => {
     
     let login = $("#login").val().trim().replace(/\s/g, '');
+    let password = $('#password').val().trim()
 
-    if(login.length < 2){return $('#loginWarning').text('You must provide more than 1 character!');}
-    
+    if(login.length < 2){return $('#loginWarning').text('You must provide more than 1 character for your Username!');}
+    if(password.length < 6){return $('#loginWarning').text('You must provide more than 1 character for your Password!');}
+
     localStorage.setItem('user', login);
 
-    usersRef.once('value').then(function(data){
+    usersRef.where('username', '==', login).get().then(function(snap){
 
-        if(!data.val()) {
-            usersRef.update({playerOne: {[login]: true}});
+        if(snap.empty) {
+            return usersRef.doc().set({username: login, password: password}, {merge: true});
         }
-        else if (data.val()) {
-            usersRef.update({playerTwo: {[login]: true}});
-        }
-    });
-
-    $("#login").remove();
-    $("#submit").remove();
-    $('#loginWarning').remove();
-
-    $("#btnTarget").append('<img src="imgs/rock.png" id="rock" class="btns" value="rock" alt="rock">');
-    $("#btnTarget").append('<img src="imgs/paper.png" id="paper" class="btns" value="paper" alt="paper">');
-    $("#btnTarget").append('<img src="imgs/scissor.png" id="scissor" class="btns" value="scissor" alt="scissor">');
-
-    $("#chatSubmit").css({visibility: 'visible'});
-});
-
-usersRef.on('child_added', function(data){
-
-    if (data.val()) {
-
-        console.log(data.key);
-                            
-        if (data.key === 'playerOne') {
-            
-            console.log('PLAYER ONE', data.node_.children_.root_.key)
-
-            let playerOne = data.node_.children_.root_.key;
         
-            $("#p1ScoreHead").addClass(playerOne);
-            $("#p1Score").addClass(playerOne);
-            $("#p1Chooses").addClass(playerOne);
-            $("#p1Choice").addClass(playerOne);
-
-            $("#p1ScoreHead").attr('id', `${playerOne}ScoreHead`);
-            $("#p1Score").attr('id', `${playerOne}Score`);
-            $("#p1Chooses").attr('id', `${playerOne}Chooses`);
-            $("#p1Choice").attr('id', `${playerOne}Choice`);
-
-            $(`#${playerOne}ScoreHead`).text(playerOne);
-            $(`#${playerOne}Chooses`).text(`${playerOne} Chooses!`);
-        } 
-        else if (data.key === 'playerTwo') {
+        snap.forEach((user) => {
             
-            console.log('PLAYER TWO', data.node_.children_.root_.key);
-            let playerTwo = data.node_.children_.root_.key;
-            $("#p2ScoreHead").addClass(playerTwo);
-            $("#p2Score").addClass(playerTwo);
-            $("#p2Chooses").addClass(playerTwo);
-            $("#p2Choice").addClass(playerTwo);
-
-            $("#p2ScoreHead").attr('id', `${playerTwo}ScoreHead`);
-            $("#p2Score").attr('id', `${playerTwo}Score`);
-            $("#p2Chooses").attr('id', `${playerTwo}Chooses`);
-            $("#p2Choice").attr('id', `${playerTwo}Choice`);
-
-            $(`#${playerTwo}ScoreHead`).text(playerTwo);
-            $(`#${playerTwo}Chooses`).text(`${playerTwo} Chooses!`);
-        }
-    }
-});
-
-$(document).ready($(document).on("click", ".btns", function(){
-    
-    let playerChoice = this.id;
-    let user = localStorage.getItem('user');
-        
-        usersRef.once('value').then(data => {
-    
-            if (data.val()) {
-    
-                choicesRef.update({
-                    [user]: playerChoice.toUpperCase()
-                });
-                usersRef.update({[user]: false});
-    
-                $("#btnTarget").css({display: 'none'});
-                $("#chosen").text(`Waiting for other player's choice!`);
+            if(user.data().password === password) {
+                console.log('CORRECT');
+                $('#root').empty();
+                return $('#root').append(menu());
+            }
+            if(user.data().password !== password) {
+                return $('#loginWarning').text('Incorrect Credentials!');
             }
         });
-}));
+    });
+});
 
-choicesRef.on('child_added', function(data){
+$(document).on("click", '#submitSignUp', () => {
     
-    if (data.key === playerOne) {
+    let login = $("#login").val().trim().replace(/\s/g, '');
+    let password = $('#password').val().trim()
 
-        playerOneChoice = data.val();
-        console.log(data.val());
-    } 
-    else if (data.key == playerTwo) {
-        
-        playerTwoChoice = data.val();
-        console.log(data.val());
+    if(login.length < 2){return $('#loginWarning').text('You must provide more than 1 character for your Username!');}
+    if(password.length < 6){return $('#loginWarning').text('You must provide more than 1 character for your Password!');}
+
+    usersRef.where('username', '==', login).get().then(function(snap){
+
+        if(snap.empty) {
+            console.log('CORRECT');
+
+            $('#root').empty();
+            $('#root').append(menu());
+            localStorage.setItem('user', login);
+            return usersRef.doc().set({username: login, password: password}, {merge: true});
+        }
+        if(!snap.empty) {
+            return $('#loginWarning').text('Incorrect Credentials!');
+        }
+    });
+});
+
+$(document).on('click', '#joinPublic', () => {
+
+    console.log('GET PUBLIC LOBBIES');
+    publicRef.get().then((snap) => {
+
+        snap.forEach((lobby) => {
+            console.log(lobby.data().challenger);
+            if(!lobby.data().full) {lobbyInput(lobby)}
+        });
+    });
+});
+
+$(document).on('click', '#submitPublic', () => {
+    let name = $('#lobbyName').val();
+
+    if(name.length < 3) {
+        return $('#lobbyWarning').text('The lobby name must be more than 3 characters!');
     }
-    if ((playerOneChoice) && (playerTwoChoice)) {
-        
-        $(`#playerOneChoice`).text(playerOneChoice)
-        $(`#playerTwoChoice`).text(playerTwoChoice)
-        
-        rpsRules()  
-        
-        setTimeout(function(){
-            $(`#playerOneChoice`).text('');
-            $(`#playerTwoChoice`).text('');
-            $("#chosen").text('');
-            
-            $(`#btnTarget`).css({display: 'block'});
 
-            choicesRef.remove()
+    publicRef.where('name', '==', name).get().then((snap) => {
+        
+        if(!snap.empty) {
+            return $('#lobbyWarning').text('A lobby already exists with that name!');
+        }
+        if(snap.empty) {
+            console.log('SETTING NEW LOBBY');
             
-            for (var i = 0; i < users.length; i++){
-               database.ref('users').update({
-                    [users[i]]: true
-                }) 
+            let username = localStorage.getItem('user');
+
+            localStorage.setItem('lobby', name); 
+            localStorage.setItem('openStatus', true);
+
+            addPublicListener(name);
+            renderLobby();
+            renderButtons();
+            return publicRef.doc(name).set({
+                name: name,
+                full: false,
+                playerOne: username,
+                p1Active: false,
+                p2Active: false,
+                choices: {
+                    playerOne: {
+                        isChoosing: true
+                    },
+                    playerTwo: {
+                        isChoosing: true
+                    }
+                }
+            });
+        }
+    });
+});
+
+$(document).on('click', '.connectPublic', function() {
+
+    let name = this.id;
+    let username = localStorage.getItem('user');
+
+    publicRef.where('name', '==', name).get().then((lobby) => {
+
+        if(lobby.empty) {
+            return $('#lobbyWarning').text('No lobby was found with the information you provided');
+        }
+        if(!lobby.empty) {
+            lobby.forEach((info) => {
+
+                let lobbyInfo = info.data();
+
+                if(lobbyInfo.name !== name) {
+                    return $('#lobbyInfo').text(`Something appears to have broken :(`);
+                }
+                if(lobbyInfo.name === name) {
+                    console.log(info.data());
+                    if(lobbyInfo.full) {
+                        return $('#lobbyWarning').text('This lobby is already full!');
+                    }
+                    if(!lobbyInfo.full) {
+
+                        localStorage.setItem('lobby', name);
+                        localStorage.setItem('openStatus', true);
+
+                        addPublicListener(name); 
+                        renderLobby();
+                        renderButtons();
+                        return publicRef.doc(name).update({
+                            playerTwo: username,
+                            full: true
+                        });    
+                    }
+                }
+            });
+        }
+    });
+});
+
+$(document).on('click', '#submitPrivate', () => {
+
+    let name = $('#lobbyName').val().trim();
+    let password = $('#lobbyPass').val().trim();
+
+    if(name.length < 3) {
+        return $('#lobbyWarning').text('The lobby name must be more than 3 characters!');
+    }
+    if (password.length < 6) {
+        return $('#lobbyWarning').text('The lobby password must be more than 6 characters!');
+    }
+
+    privateRef.where('name', '==', name).get().then((snap) => {
+        
+        if(!snap.empty) {
+            return $('#lobbyWarning').text('A lobby already exists with that name!');
+        }
+        if(snap.empty) {
+            console.log('SETTING NEW LOBBY');
+            
+            let username = localStorage.getItem('user');
+
+            localStorage.setItem('lobby', name); 
+            localStorage.setItem('openStatus', false);
+
+            addPrivateListener(name);
+            renderLobby();
+            renderButtons();
+            return privateRef.doc(name).set({
+                name: name,
+                password: password,
+                full: false,
+                playerOne: username,
+                p1Active: false,
+                p2Active: false,
+                choices: {
+                    playerOne: {
+                        isChoosing: true
+                    },
+                    playerTwo: {
+                        isChoosing: true
+                    }
+                }
+            });
+        }
+    });
+});
+ 
+$(document).on('click', '#connectPrivate', () => {
+    let name = $('#lobbyName').val().trim();
+    let password = $('#lobbyPass').val().trim();
+    let username = localStorage.getItem('user');
+
+    privateRef.where('name', '==', name).get().then((lobby) => {
+
+        if(lobby.empty) {
+            return $('#lobbyWarning').text('No lobby was found with the information you provided');
+        }
+        if(!lobby.empty) {
+            lobby.forEach((info) => {
+
+                let lobbyInfo = info.data();
+
+                if(lobbyInfo.password !== password) {
+                    return $('#lobbyInfo').text(`Password provided doesn't match`);
+                }
+                if(lobbyInfo.password === password) {
+                    console.log(info.data());
+                    if(lobbyInfo.full) {
+                        return $('#lobbyWarning').text('This lobby is already full!');
+                    }
+                    if(!lobbyInfo.full) {
+
+                        localStorage.setItem('lobby', name); 
+                        localStorage.setItem('openStatus', false);
+
+                        addPrivateListener(name); 
+                        renderLobby();
+                        renderButtons();
+                        return privateRef.doc(name).update({
+                            playerTwo: username,
+                            full: true
+                        });    
+                    }
+                }
+            });
+        }
+    });
+});
+
+$(document).on('click', '.btns', function() {
+    let playerChoice = this.id;
+    let user = localStorage.getItem('user');
+    let lobby = localStorage.getItem('lobby');
+    let open = localStorage.getItem('openStatus');
+    
+    if(open) {
+
+        publicRef.doc(lobby).get().then(snap => {
+            
+            console.log(snap.data());
+    
+            $("#btnTarget").css({display: 'none'});
+            $("#chosen").text(`Waiting for other player's choice!`);
+    
+            if((snap.data().playerOne)&&(snap.data().playerOne === user)) {
+                console.log('PLAYER ONE')
+                return publicRef.doc(lobby).update({
+                        'choices.playerOne': {
+                            isChoosing: false,
+                            username: user,
+                            choice: playerChoice.toUpperCase()
+                        }
+                });
             }
-        }, 2000)
+            if((snap.data().playerTwo)&&(snap.data().playerTwo === user)) {
+                console.log('PLAYERTWO')
+                return publicRef.doc(lobby).update({
+                        'choices.playerTwo': {
+                            isChoosing: false,
+                            username: user,
+                            choice: playerChoice.toUpperCase()
+                        }
+                });
+            }
+        });
+
     }
-})
+    if(!open) {
 
-function rpsRules() {
-    console.log("RPSRULES")
+        privateRef.doc(lobby).get().then(snap => {
+            
+            console.log(snap.data());
     
-    if ((playerOneChoice == 'ROCK') && (playerTwoChoice == 'ROCK')) {
-        ties++
-        $("#ties").text(ties)
+            $("#btnTarget").css({display: 'none'});
+            $("#chosen").text(`Waiting for other player's choice!`);
+    
+            if((snap.data().playerOne)&&(snap.data().playerOne === user)) {
+                console.log('PLAYER ONE')
+                return privateRef.doc(lobby).update({
+                        'choices.playerOne': {
+                            isChoosing: false,
+                            username: user,
+                            choice: playerChoice.toUpperCase()
+                        }
+                });
+            }
+            if((snap.data().playerTwo)&&(snap.data().playerTwo === user)) {
+                console.log('PLAYERTWO')
+                return privateRef.doc(lobby).update({
+                        'choices.playerTwo': {
+                            isChoosing: false,
+                            username: user,
+                            choice: playerChoice.toUpperCase()
+                        }
+                });
+            }
+        });
+    }
+
+});
+
+const rpsRules = (playerOneChoice, playerTwoChoice, users) => {
+    
+    let playerOne = users.playerOne;
+    let playerTwo = users.playerTwo
+    
+    if ((playerOneChoice === 'ROCK') && (playerTwoChoice == 'ROCK')) {
+        ties++;
+        $("#ties").text(ties);
+        return $('#chosen').text(`It's a tie!`);
         
-    }else if ((playerOneChoice == 'PAPER') && (playerTwoChoice == 'PAPER')) {
-        ties++
-        $("#ties").text(ties)
+    }else if ((playerOneChoice === 'PAPER') && (playerTwoChoice == 'PAPER')) {
+        ties++;
+        $("#ties").text(ties);
+        return $('#chosen').text(`It's a tie!`);
 
-    }else if ((playerOneChoice == 'SCISSOR') && (playerTwoChoice == 'SCISSOR')) {
-        ties++
-        $("#ties").text(ties)
+    }else if ((playerOneChoice === 'SCISSOR') && (playerTwoChoice == 'SCISSOR')) {
+        ties++;
+        $("#ties").text(ties);
+        return $('#chosen').text(`It's a tie!`);
 
-    }else if ((playerOneChoice == 'ROCK') && (playerTwoChoice == 'SCISSOR')) {
-        playerOneWins++
-        $("#" + playerOne + "Score").text(playerOneWins)
+    }else if ((playerOneChoice === 'ROCK') && (playerTwoChoice === 'SCISSOR')) {
+        playerOneWins++;
+        $(`.p1Score`).text(playerOneWins);
+        return $('#chosen').text(`${playerOne} wins!`);
 
-    }else if ((playerOneChoice == 'SCISSOR') && (playerTwoChoice == 'PAPER')) {
-        playerOneWins++
-        $("#" + playerOne + "Score").text(playerOneWins)
+    }else if ((playerOneChoice === 'SCISSOR') && (playerTwoChoice === 'PAPER')) {
+        playerOneWins++;
+        $(`.p1Score`).text(playerOneWins);
+        return $('#chosen').text(`${playerOne} wins!`);
 
-    }else if ((playerOneChoice == 'PAPER') && (playerTwoChoice == 'ROCK')) {
-        playerOneWins++
-        $("#" + playerOne + "Score").text(playerOneWins)
+    }else if ((playerOneChoice === 'PAPER') && (playerTwoChoice === 'ROCK')) {
+        playerOneWins++;
+        $(`.p1Score`).text(playerOneWins);
+        return $('#chosen').text(`${playerOne} wins!`);
 
-    }else if ((playerOneChoice == 'SCISSOR') && (playerTwoChoice == 'ROCK')) {
-        playerTwoWins++
-        $("#" + playerTwo + "Score").text(playerTwoWins)
+    }else if ((playerOneChoice === 'SCISSOR') && (playerTwoChoice === 'ROCK')) {
+        playerTwoWins++;
+        $(`.p2Score`).text(playerTwoWins);
+        return $('#chosen').text(`${playerTwo} wins!`);
 
-    }else if ((playerOneChoice == 'ROCK') && (playerTwoChoice == 'PAPER')) {
-        playerTwoWins++
-        $("#" + playerTwo + "Score").text(playerTwoWins)
+    }else if ((playerOneChoice === 'ROCK') && (playerTwoChoice === 'PAPER')) {
+        playerTwoWins++;
+        $(`.p2Score`).text(playerTwoWins);
+        return $('#chosen').text(`${playerTwo} wins!`);
 
-    }else if ((playerOneChoice == 'PAPER') && (playerTwoChoice == 'SCISSOR')) {
-        playerTwoWins++
-        $("#" + playerTwo + "Score").text(playerTwoWins)
+    }else if ((playerOneChoice === 'PAPER') && (playerTwoChoice === 'SCISSOR')) {
+        playerTwoWins++;
+        $(`.p2Score`).text(playerTwoWins);
+        return $('#chosen').text(`${playerTwo} wins!`);
     }
 }
 
-$(document).ready($(document).on("click", "#chatSubmit", function(){
+// $(document).ready($(document).on("click", "#chatSubmit", function(){
     
-    var input = $("#chatInput").val()
-    chatLog.push(input)
+//     var input = $("#chatInput").val();
+//     chatLog.push(input);
 
-    chatRef.once('value').then(function(snap){
-        var numberChildren = snap.numChildren()
-        database.ref('chatLogIndex').update({
-            logCount: numberChildren
-        })
+//     chatRef.once('value').then(function(snap){
+//         var numberChildren = snap.numChildren();
+//         chatLog.update({
+//             logCount: numberChildren
+//         });
     
-        database.ref('chatLog').update({
-            [numberChildren]: localStorage.getItem('user') + ": " + input
-        })
-    })
-    $("#chatInput").val('')
-}))
+//         chatRef.update({
+//             [numberChildren]: `${localStorage.getItem('user')}: ${input}`
+//         });
+//     });
+//     $("#chatInput").val('');
+// }));
 
-chatRef.on('child_added', function(data){
+// chatRef.on('child_added', function(){
     
-    var numberChildren = 0
+//     var numberChildren = 0
 
-    database.ref('chatLog').once('value').then(function(snapshot){
+//     chatRef.once('value').then(function(snapshot){
         
-        numberChildren = snapshot.numChildren()
-        console.log(numberChildren)
+//         numberChildren = snapshot.numChildren()
+//         console.log(numberChildren)
 
-        if (numberChildren <= 6) {
+//         if (numberChildren <= 6) {
             
-            for (var i = numberChildren; i > 0; i-- ) {
+//             for (var i = numberChildren; i > 0; i-- ) {
                 
-                $('#chat' + i).text(snapshot.child(i).val())
-                console.log(snapshot.child(i).val())
-            }
-        }else if (numberChildren > 6) {
+//                 $('#chat' + i).text(snapshot.child(i).val())
+//                 console.log(snapshot.child(i).val())
+//             }
+//         }else if (numberChildren > 6) {
             
-            chatIndex = 6
+//             chatIndex = 6
             
-            for (var i = numberChildren; i >= numberChildren - 6; i--) {
+//             for (var i = numberChildren; i >= numberChildren - 6; i--) {
                     
-                    $('#chat' + chatIndex).text(snapshot.child(i).val())
-                    console.log(snapshot.child(i).val())
-                    chatIndex--
-            }
-        }
-    })
-})
+//                     $('#chat' + chatIndex).text(snapshot.child(i).val())
+//                     console.log(snapshot.child(i).val())
+//                     chatIndex--
+//             }
+//         }
+//     })
+// })

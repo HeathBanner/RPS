@@ -1,0 +1,243 @@
+
+#loginDiv, #signupDiv {
+    width: 450px;
+    background: linear-gradient(45deg, #f23e16 30%, #d92800 90%);
+    box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 5px 0px rgba(0,0,0,0.14), 0px 1px 10px 0px rgba(0,0,0,0.12);
+    border-radius: 4px;
+    padding: 10px 30px;
+    margin: 40px auto 0px auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+#loginDiv > input, #loginDiv > button, #signupDiv > input, #signupDiv > button {
+    width: 100%;
+    margin-bottom: 15px;
+    padding: 5px 10px;
+    text-align: center;
+    border: none;
+    border-radius: 4px;
+    box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 5px 0px rgba(0,0,0,0.14), 0px 1px 10px 0px rgba(0,0,0,0.12);
+}
+
+#loginDiv > button, #signupDiv > button {
+    color: white;
+    background: linear-gradient(45deg, #373ced 30%, #262bc7 90%);
+}
+
+#loginDiv > button:hover, #signupDiv > button:hover {
+    background: linear-gradient(45deg, #565bf1 30%, #353bcf 90%);
+}
+
+#loginDiv > h5,  #loginDiv > h6, #signupDiv > h5, #signupDiv > h6 {
+    color: white;
+}
+
+#loginDiv > h5, #signupDiv > h5 {
+    margin-top: 5px;
+    font-size: 1.8rem;
+}
+
+hr {
+    width: 100%;
+    margin: 0px 0px 20px 0px;
+    border-color: rgba(0,0,0,0.2);
+}
+
+#loginWarning {
+    border-radius: 4px;
+    /* color: red !important; */
+    text-align: center;
+}
+
+#loadSignup, #loadLogin {
+    padding: 5px 10px !important;
+    background: linear-gradient(45deg, #0dd9d9 30%, #00c2c2 90%) !important;
+}
+
+#loadSignup:hover, #loadLogin:hover {
+    background: linear-gradient(45deg, #19eeee 30%, #0fe2e2 90%) !important;
+}
+
+#loadSignup > h6, #loadLogin > h6 {
+    color: #ededed;
+    margin: 5px 10px;
+}
+
+
+
+/* MENU STYLING */
+
+
+#menuContainer {
+    /* display: flex;
+    justify-content: center;
+    align-items: center; */
+    width: 450px;
+    margin: 40px auto 0px auto;
+    padding: 20px 40px;
+    border-radius: 4px;
+    
+    box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 5px 0px rgba(0,0,0,0.14), 0px 1px 10px 0px rgba(0,0,0,0.12);
+    background: linear-gradient(45deg, #f23e16 30%, #d92800 90%);
+    text-align: center;
+}
+
+#menuContainer > button {
+    width: 100%;
+    margin: 10px 0px;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 5px 0px rgba(0,0,0,0.14), 0px 1px 10px 0px rgba(0,0,0,0.12);
+    background: linear-gradient(45deg, #373ced 30%, #262bc7 90%);
+}
+
+#menuContainer > button:hover {
+    background: linear-gradient(45deg, #565bf1 30%, #353bcf 90%);
+}
+
+#menuContainer h6 {
+    margin: 0px;
+    color: white;
+}
+
+
+
+/* LOBBY CREATION */
+
+
+#lobbyCreation {
+    width: 450px;
+    margin: 40px auto 0px auto;
+    padding: 15px 30px;
+    border-radius: 4px;
+    background: linear-gradient(45deg, #f23e16 30%, #d92800 90%);
+    box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 5px 0px rgba(0,0,0,0.14), 0px 1px 10px 0px rgba(0,0,0,0.12);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+#lobbyCreation > h5 {
+    color: white;
+    margin-top: 5px;
+    font-size: 1.8rem;
+}
+
+#lobbyCreation > input, #lobbyCreation > button {
+    width: 100%;
+    padding: 5px 10px;
+    margin-bottom: 20px;
+    border: none;
+    border-radius: 4px;
+    text-align: center;
+    box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 5px 0px rgba(0,0,0,0.14), 0px 1px 10px 0px rgba(0,0,0,0.12);
+}
+
+#lobbyCreation > button {
+    background: linear-gradient(45deg, #373ced 30%, #262bc7 90%);
+    color: white;
+}
+
+#lobbyCreation > button:hover {
+    background: linear-gradient(45deg, #565bf1 30%, #353bcf 90%);
+}
+
+#lobbyWarning {
+    color: #f3f2ff;
+}
+
+
+
+/* PRIVATE LOBBY JOIN */
+
+
+
+#connectContainer {
+    width: 450px;
+    margin: 40px auto 0px auto;
+    padding: 15px 30px;
+    border-radius: 4px;
+    background: linear-gradient(45deg, #f23e16 30%, #d92800 90%);
+    box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 5px 0px rgba(0,0,0,0.14), 0px 1px 10px 0px rgba(0,0,0,0.12);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+#connectContainer > h5 {
+    font-size: 1.6rem;
+    color: white;
+    margin-top: 5px;
+}
+
+#connectContainer > input, #connectContainer > button {
+    width: 100%;
+    margin-bottom: 20px;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    text-align: center;
+}
+
+#connectPrivate {
+    background: linear-gradient(45deg, #373ced 30%, #262bc7 90%);
+    color: white;
+}
+
+#connectPrivate:hover {
+    background: linear-gradient(45deg, #565bf1 30%, #353bcf 90%);
+}
+
+
+
+/* PUBLIC LOBBY JOIN */
+
+
+
+
+#lobbyContainer {
+    width: 450px;
+    border-radius: 4px;
+    margin: 40px auto;
+    padding: 15px 30px;
+    background: linear-gradient(45deg, #f23e16 30%, #d92800 90%);
+    box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 5px 0px rgba(0,0,0,0.14), 0px 1px 10px 0px rgba(0,0,0,0.12);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+#lobbyContainer > h4 {
+    color: white;
+}
+
+.lobby {
+    width: 100%;
+    margin-bottom: 20px;
+    padding: 15px 30px;
+    text-align: center;
+    border-radius: 4px;
+    background: linear-gradient(45deg, #ffffff 30%, #e0e0e0 90%);
+    box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 5px 0px rgba(0,0,0,0.14), 0px 1px 10px 0px rgba(0,0,0,0.12);
+}
+
+.lobby > button {
+    width: 100%;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    color: white;
+    background: linear-gradient(45deg, #373ced 30%, #262bc7 90%);
+    box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 5px 0px rgba(0,0,0,0.14), 0px 1px 10px 0px rgba(0,0,0,0.12);
+}
+
+.lobby > button:hover {
+    background: linear-gradient(45deg, #565bf1 30%, #353bcf 90%);
+}
