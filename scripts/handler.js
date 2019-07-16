@@ -36,6 +36,8 @@ const lobbyInput = (lobby) => {
 
     $('#lobbyContainer').append(
         `<div class="lobby">
+            <h4>${lobby.data().name}</h4>
+            <hr>
             <h5>Player: ${lobby.data().playerOne}</h5>
             <button id="${lobby.data().name}" class="connectPublic">Join</button>
         </div>`

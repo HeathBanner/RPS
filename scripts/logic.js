@@ -228,7 +228,6 @@ $(document).on('click', '#joinPublic', () => {
     publicRef.get().then((snap) => {
 
         snap.forEach((lobby) => {
-            console.log(lobby.data().challenger);
             if(!lobby.data().full) {lobbyInput(lobby)}
         });
     });

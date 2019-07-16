@@ -224,8 +224,12 @@ hr {
     padding: 15px 30px;
     text-align: center;
     border-radius: 4px;
-    background: linear-gradient(45deg, #ffffff 30%, #e0e0e0 90%);
+    background: linear-gradient(45deg, #ffffff 30%, #fff1f1 90%);
     box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 5px 0px rgba(0,0,0,0.14), 0px 1px 10px 0px rgba(0,0,0,0.12);
+}
+
+.lobby > h5 {
+    margin-bottom: 20px;
 }
 
 .lobby > button {
