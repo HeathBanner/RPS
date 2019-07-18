@@ -1,14 +1,18 @@
 
 const config = {
-    apiKey: "AIzaSyAJS4YQWU5DmESeYueG1qH1NGkjv3DncEY",
-    authDomain: "fir-click-counter-7cdb9.firebaseapp.com",
-    databaseURL: "https://rpsapp-a5bc6.firebaseio.com/",
-    projectId: 'rpsapp-a5bc6'
+    apiKey: "AIzaSyAlPNMry6JqL2XeDIQ-2iAeTAwerXCXn38",
+    authDomain: "rpsapp-a5bc6.firebaseapp.com",
+    databaseURL: "https://rpsapp-a5bc6.firebaseio.com",
+    projectId: "rpsapp-a5bc6",
+    storageBucket: "rpsapp-a5bc6.appspot.com",
+    messagingSenderId: "793047331326",
+    appId: "1:793047331326:web:2989683cb3944c7b"
 };
   
 firebase.initializeApp(config);
 
 const database = firebase.firestore();
+const functions = firebase.functions();
 
 const usersRef = database.collection('users');
 const publicRef = database.collection('publicLobbies');
@@ -23,28 +27,24 @@ const addPrivateListener = (name) => {
         let playerOneChoice = info.choices.playerOne.choice;
         let playerTwoChoice = info.choices.playerTwo.choice;
 
-
         const users = {
             playerOne: info.playerOne,
             playerTwo: info.playerTwo
         };
 
-        if((!info.p1Active)&&(info.playerOne)) {
+        playerJoin(info);
+        isChoosing(info);
 
-            playerJoin(info);
+        if((!info.p1Active)&&(info.playerOne)) {
             privateRef.doc(name).update({
                 p1Active: true
             });
         }
         if((!info.p2Active)&&(info.playerTwo)) {
-
-            playerJoin(info);
             privateRef.doc(name).update({
                 p2Active: true
             });
         }
-        console.log(info);
-        isChoosing(info);
 
         if((playerOneChoice)&&(playerTwoChoice)) {
         
@@ -83,6 +83,7 @@ const addPrivateListener = (name) => {
             }, 5000)
         }
     });   
+    
 };
 
 const addPublicListener = (name) => {
@@ -158,6 +159,74 @@ const addPublicListener = (name) => {
 
 //=========================================================//
 
+firebase.firestore().collection('status').where('state', '==', 'online').onSnapshot((snapshot) => {
+    snapshot.docChanges().forEach((change) => {
+        if(change.type === 'added') {
+            let msg = `User ${change.doc.id} is online!`;
+            return console.log(msg);
+        }
+        if(change.type === 'removed') {
+            let msg = `User ${change.doc.id} is offline!`;
+            return console.log(msg);
+        }
+    });
+});
+
+
+const isOfflineForDatabase = {
+    state: 'offline',
+    last_changed: firebase.firestore.FieldValue.serverTimestamp(),
+};
+
+const isOfflineForFirestore = {
+    state: 'offline',
+    last_changed: firebase.firestore.FieldValue.serverTimestamp()
+};
+
+const isOnlineForDatabase = {
+    state: 'online',
+    last_changed: firebase.firestore.FieldValue.serverTimestamp(),
+};
+
+const isOnlineForFirestore = {
+    state: 'online',
+    last_changed: firebase.firestore.FieldValue.serverTimestamp(),
+};
+
+firebase.database().ref('.info/connected').on('value', function(snapshot) {
+        
+    console.log(snapshot.val());
+        if(!firebase.auth().currentUser){return console.log('NOT UIID')}
+        
+        var uid = firebase.auth().currentUser.uid;
+    
+        const userStatusDatabaseRef = firebase.database().ref('/status/' + uid);
+        const userStatusFirestoreRef = firebase.firestore().doc('/status/' + uid);
+        
+
+        if (snapshot.val() == false) {
+            console.log('IS offLINE')
+            // userStatusDatabaseRef.set(isOfflineForDatabase)
+            userStatusFirestoreRef.set(isOfflineForFirestore);
+            return;
+        };
+    
+        userStatusDatabaseRef.onDisconnect().set(isOfflineForDatabase).then(() => {
+                
+            userStatusDatabaseRef.set(isOnlineForDatabase);
+            userStatusFirestoreRef.set(isOnlineForFirestore);
+        });
+
+        userStatusFirestoreRef.onSnapshot(function(doc) {
+            var isOnline = doc.data().state === 'online';
+
+            console.log(isOnline);
+        });
+    });
+    
+
+
+
 var ties = 0
 var playerOneWins = 0
 var playerTwoWins = 0
@@ -173,52 +242,55 @@ $(document).on("click", '#submitLogin', () => {
     let login = $("#login").val().trim().replace(/\s/g, '');
     let password = $('#password').val().trim()
 
-    if(login.length < 2){return $('#loginWarning').text('You must provide more than 1 character for your Username!');}
-    if(password.length < 6){return $('#loginWarning').text('You must provide more than 1 character for your Password!');}
+    console.log('LOGIN', login, password);
 
-    localStorage.setItem('user', login);
-
-    usersRef.where('username', '==', login).get().then(function(snap){
-
-        if(snap.empty) {
-            return usersRef.doc().set({username: login, password: password}, {merge: true});
-        }
+    firebase.auth().signInWithEmailAndPassword(login, password).then(() => {
         
-        snap.forEach((user) => {
-            
-            if(user.data().password === password) {
-                console.log('CORRECT');
-                $('#root').empty();
-                return $('#root').append(menu());
-            }
-            if(user.data().password !== password) {
-                return $('#loginWarning').text('Incorrect Credentials!');
-            }
-        });
+        $('#root').empty();
+        return $('#root').append(menu());
+    })
+    .catch((error) => {
+        if(error){
+            return $('#loginWarning').text(error.message);
+        }
     });
 });
 
-$(document).on("click", '#submitSignUp', () => {
-    
-    let login = $("#login").val().trim().replace(/\s/g, '');
-    let password = $('#password').val().trim()
+$(document).on('click', '#signout', () => {
+    firebase.auth().signOut().then(() => {
+        console.log('signed out');
+    })
+    .catch((error) => {
+        if(error) console.log(error);
+    });
+});
 
-    if(login.length < 2){return $('#loginWarning').text('You must provide more than 1 character for your Username!');}
+$(document).on("submit", '#signupForm', (e) => {
+    e.preventDefault();
+    let formData = $('#signupForm').serializeArray();
+
+    let username = formData[0].value;
+    let email = formData[1].value;
+    let password = formData[2].value;
+
+    console.log(username, email, password);
+
+    if(username.length < 2){return $('#loginWarning').text('You must provide more than 1 character for your Username!');}
     if(password.length < 6){return $('#loginWarning').text('You must provide more than 1 character for your Password!');}
 
-    usersRef.where('username', '==', login).get().then(function(snap){
+    firebase.auth().createUserWithEmailAndPassword(email, password)
+    .then(() => {
 
-        if(snap.empty) {
-            console.log('CORRECT');
+        let uid = firebase.auth().currentUser.uid;
+        localStorage.setItem('user', username);
 
-            $('#root').empty();
-            $('#root').append(menu());
-            localStorage.setItem('user', login);
-            return usersRef.doc().set({username: login, password: password}, {merge: true});
-        }
-        if(!snap.empty) {
-            return $('#loginWarning').text('Incorrect Credentials!');
-        }
+        $('#root').empty();
+        $('#root').append(login());
+        usersRef.doc(uid).set({username: username, password: password, email: email}, {merge: true});
+    })
+    .catch((error) => {
+        
+        if(error){console.log(error);return $('#loginWarning').text(error.message)};
     });
 });
 
@@ -249,6 +321,7 @@ $(document).on('click', '#submitPublic', () => {
             console.log('SETTING NEW LOBBY');
             
             let username = localStorage.getItem('user');
+            let uid = firebase.auth().currentUser.uid;
 
             localStorage.setItem('lobby', name); 
             localStorage.setItem('openStatus', true);
@@ -256,6 +329,13 @@ $(document).on('click', '#submitPublic', () => {
             addPublicListener(name);
             renderLobby();
             renderButtons();
+
+            usersRef.doc(uid).update({
+                lobby: name,
+                private: false,
+                public: true,
+                host: true,
+            });
             return publicRef.doc(name).set({
                 name: name,
                 full: false,
@@ -303,9 +383,17 @@ $(document).on('click', '.connectPublic', function() {
                         localStorage.setItem('lobby', name);
                         localStorage.setItem('openStatus', true);
 
+                        let uid = firebase.auth().currentUser.uid;
+
                         addPublicListener(name); 
                         renderLobby();
                         renderButtons();
+                        usersRef.doc(uid).update({
+                            lobby: name,
+                            private: false,
+                            public: true,
+                            host: false,
+                        });
                         return publicRef.doc(name).update({
                             playerTwo: username,
                             full: true
@@ -338,6 +426,7 @@ $(document).on('click', '#submitPrivate', () => {
             console.log('SETTING NEW LOBBY');
             
             let username = localStorage.getItem('user');
+            let uid = firebase.auth().currentUser.uid;
 
             localStorage.setItem('lobby', name); 
             localStorage.setItem('openStatus', false);
@@ -345,6 +434,12 @@ $(document).on('click', '#submitPrivate', () => {
             addPrivateListener(name);
             renderLobby();
             renderButtons();
+            usersRef.doc(uid).update({
+                lobby: name,
+                private: true,
+                public: false,
+                host: true,
+            });
             return privateRef.doc(name).set({
                 name: name,
                 password: password,
@@ -393,9 +488,17 @@ $(document).on('click', '#connectPrivate', () => {
                         localStorage.setItem('lobby', name); 
                         localStorage.setItem('openStatus', false);
 
+                        let uid = firebase.auth().currentUser.uid;
+
                         addPrivateListener(name); 
                         renderLobby();
                         renderButtons();
+                        usersRef.doc(uid).update({
+                            lobby: name,
+                            private: true,
+                            public: false,
+                            host: false,
+                        });
                         return privateRef.doc(name).update({
                             playerTwo: username,
                             full: true
@@ -412,8 +515,10 @@ $(document).on('click', '.btns', function() {
     let user = localStorage.getItem('user');
     let lobby = localStorage.getItem('lobby');
     let open = localStorage.getItem('openStatus');
+
+    console.log(open);
     
-    if(open) {
+    if(open === 'true') {
 
         publicRef.doc(lobby).get().then(snap => {
             
@@ -445,7 +550,7 @@ $(document).on('click', '.btns', function() {
         });
 
     }
-    if(!open) {
+    if(open === 'false') {
 
         privateRef.doc(lobby).get().then(snap => {
             

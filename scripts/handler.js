@@ -83,39 +83,21 @@ const playerJoin = (info) => {
     if(info.playerOne) {
 
         let playerOne = info.playerOne;
-
-        $("#p1ScoreHead").addClass(playerOne);
-        $("#p1Score").addClass(playerOne);
-        $("#p1Chooses").addClass(playerOne);
-        $("#p1Choice").addClass(playerOne);
-        $("#p1ChoiceDiv").addClass(`${playerOne}ChoiceDiv`);
-        $('#p1Choosing').addClass(`${playerOne}Img`);
     
-        $("#p1ScoreHead").attr('id', `${playerOne}ScoreHead`);
-        $("#p1Score").attr('id', `${playerOne}Score`);
-        $("#p1Chooses").attr('id', `${playerOne}Chooses`);
-        $("#p1Choice").attr('id', `${playerOne}Choice`);
-    
-        $(`#${playerOne}ScoreHead`).text(playerOne);
-        $(`#${playerOne}Chooses`).text(`Waiting for ${playerOne}'s choice!`);
+        $(`.p1ScoreHead`).text(playerOne);
+        $(`.p1Chooses`).text(`Waiting for ${playerOne}'s choice!`);
     }
     if(info.playerTwo) {
 
         let playerTwo = info.playerTwo;
 
-        $("#p2ScoreHead").addClass(playerTwo);
-        $("#p2Score").addClass(playerTwo);
-        $("#p2Chooses").addClass(playerTwo);
-        $("#p2Choice").addClass(playerTwo);
-        $("#p2ChoiceDiv").addClass(`${playerTwo}ChoiceDiv`);
-        $('#p2Choosing').addClass(`${playerTwo}Img`);
-    
-        $("#p2ScoreHead").attr('id', `${playerTwo}ScoreHead`);
-        $("#p2Score").attr('id', `${playerTwo}Score`);
-        $("#p2Chooses").attr('id', `${playerTwo}Chooses`);
-        $("#p2Choice").attr('id', `${playerTwo}Choice`);
-    
-        $(`#${playerTwo}ScoreHead`).text(playerTwo);
-        $(`#${playerTwo}Chooses`).text(`Waiting for ${playerTwo}'s choice!`);
+        $(`.p2ScoreHead`).text(playerTwo);
+        $(`.p2Chooses`).text(`Waiting for ${playerTwo}'s choice!`);
+    } else {
+        $(`.p2ScoreHead`).text(`Player 2 Score`);
+        $(`.p2Chooses`).text(`Awaiting Player 2`);
+        $('.p1Score').text('0');
+        $('.p2Score').text('0');
+        $('.tiesScore').text('0');
     }
 };

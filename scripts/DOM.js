@@ -26,13 +26,17 @@ const signup = () => {
     console.log('signup')
     return (
         `<div class="col-12">
-        
+    
             <div id="signupDiv">
                 <h5>Sign Up</h5>
                 <hr>
-                <input type="text" id="login" placeholder="Username" required>
-                <input type="password" id="password" placeholder="Password" required>
-                <button id="submitSignup">Sign Up</button>
+                <form id="signupForm">
+                    <input type="text" name="username" placeholder="Username" required>
+                    <input type="email" name="email" placeholder="Email" required>
+                    <input type="password" name="password" placeholder="Password" required>
+
+                    <input type="submit" value="Sign Up" id="submitSignup">
+                </form>
                 <h6 id="loginWarning"></h6>
 
                 <button id="loadLogin">
@@ -165,26 +169,27 @@ const setLobby = () => {
                 </div>
                 
             </div>
-        </div>
-
-        <div class="mediaQ">
-
-            <div id="chatDiv">
-                <p id="chat1" class="seatWarmer"></p>
-                <p id="chat2" class="seatWarmer"></p>
-                <p id="chat3" class="seatWarmer"></p>
-                <p id="chat4" class="seatWarmer"></p>
-                <p id="chat5" class="seatWarmer"></p>
-
-                <div id="inputDiv">
-                    <input type="text" id="chatInput">
-                    <button id="chatSubmit">Send</button>
-                </div>
-
-            </div>
         </div>`
     );
 };
+
+{/* <div class="mediaQ">
+
+<div id="chatDiv">
+    <p id="chat1" class="seatWarmer"></p>
+    <p id="chat2" class="seatWarmer"></p>
+    <p id="chat3" class="seatWarmer"></p>
+    <p id="chat4" class="seatWarmer"></p>
+    <p id="chat5" class="seatWarmer"></p>
+
+    <div id="inputDiv">
+        <input type="text" id="chatInput">
+        <button id="chatSubmit">Send</button>
+    </div>
+
+</div>
+</div> */}
+
 
 const connectPrivate = () => {
     return (

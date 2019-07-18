@@ -6,8 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/5.9.3/firebase.js"></script>
-    
+
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">    
     
@@ -28,17 +27,18 @@
             <div class="col-lg-12">
                 <img src="imgs/rpsMainLogo.png" alt="logo" id="logo">
             </div>
-        
+            <!-- <button id="signout">SIGN OUT</button> -->
+
             </div>
             <div id="root" class="row">
 
-                    
+               
 
                 <div class="col-12">
                     <div id="loginDiv">
                         <h5>Login</h5>
                         <hr>
-                        <input type="text" id="login" placeholder="Username" required>
+                        <input type="email" id="login" placeholder="email" required>
                         <input type="password" id="password" placeholder="Password" required>
                         <button id="submitLogin">Login</button>
                         <h6 id="loginWarning"></h6>
@@ -54,12 +54,15 @@
 
     </div>        
     
+    <script src="https://www.gstatic.com/firebasejs/6.3.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/6.3.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/6.3.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/6.3.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/6.3.0/firebase-functions.js"></script>
+
     <script src="./scripts/logic.js"></script>
     <script src="./scripts/DOM.js"></script>
     <script src="./scripts/handler.js"></script>
     
-    <script src="https://www.gstatic.com/firebasejs/6.3.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/6.3.0/firebase-firestore.js"></script>
-
 </body>
 </html>
