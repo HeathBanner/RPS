@@ -14,10 +14,93 @@ body{
 }
 
 #logo {
+    position: relative;
     display: block;
     margin: 0 auto;
     height: 200px;
     width: 200px;
+}
+
+#lobbyLogo {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 200px;
+    width: 200px;
+}
+
+#chatContainer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    flex-wrap: wrap;
+}  
+
+#chatDiv {    
+    width: 50%;
+    margin: 20px 0px;
+    /* border: solid 4px black; */
+    border-radius: 5px;
+    /* background-image: url(../imgs/skulls.png); */
+    background: linear-gradient(45deg, #ffffff 30%, #fff1f1 90%);
+    box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 5px 0px rgba(0,0,0,0.14), 0px 1px 10px 0px rgba(0,0,0,0.12);
+}
+
+#msgContainer {
+    height: 150px;
+    overflow: scroll;
+    background-color: #fff;
+    border-radius: 4px;
+    /* padding-top: 10px; */
+}
+
+.msg {
+    margin-bottom: 0px;
+    padding: 5px 20px 5px 20px;
+    border-radius: 4px;
+}
+
+.p1 {
+    background: linear-gradient(45deg, #ffffff 30%, #fff1f1 90%);
+}
+
+.p2 {
+    background: linear-gradient(45deg, #ffffff 30%, #f1f2ff 90%);
+}
+
+#inputDiv {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 10px 15px;
+    border-radius: 4px;
+    background: linear-gradient(45deg, #373ced 30%, #262bc7 90%);
+    box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 5px 0px rgba(0,0,0,0.14), 0px 1px 10px 0px rgba(0,0,0,0.12);
+}
+
+#chatInput {
+    width: 100%;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 2px 1px -1px rgba(0,0,0,0.12);
+}
+
+#chatSubmit {
+    width: 100px;
+    margin-left: 5px;
+    padding: 5px 10px;
+    text-align: center;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    background: linear-gradient(45deg, #f23e16 30%, #d92800 90%);
+    box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 2px 1px -1px rgba(0,0,0,0.12);
+}
+
+#chatSubmit:hover {
+    background: linear-gradient(45deg, #fa5c39 30%, #f7390f 90%);
 }
 
 .scoreDiv {
@@ -99,50 +182,6 @@ body{
       transform: rotate(360deg);
     }
   }
-
-#chatDiv {
-    position: absolute;
-    top: 60px;
-    right: 10px;
-    margin-bottom: 20px;
-    border: solid 4px black;
-    border-radius: 5px;
-    background-image: url(../imgs/skulls.png);
-    font-family: 'IBM Plex Mono', monospace;
-}
-
-#inputDiv {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    border-top: solid 2px black;
-    padding: 10px 15px;
-    background-image: url(../imgs/weave.png);
-}
-
-#chatInput {
-    padding: 3px 10px;
-    border: none;
-    border-radius: 4px;
-    box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 2px 1px -1px rgba(0,0,0,0.12);
-}
-
-#chatSubmit {
-    margin-left: 5px;
-    padding: 3px 10px;
-    text-align: center;
-    border: none;
-    border-radius: 4px;
-    box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 2px 1px -1px rgba(0,0,0,0.12);
-    /* visibility: hidden; */
-}
-
-.seatWarmer {
-    min-height: 38px;
-    min-width: 100%;
-    margin: 0px 10px;
-}
 
 #outer {
     width: 100%;

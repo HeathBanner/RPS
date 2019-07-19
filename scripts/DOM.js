@@ -1,15 +1,16 @@
 
-
 const login = () => {
-    console.log('LOGIN')
+
     return (
         `<div class="col-12">
             <div id="loginDiv">
                 <h5>Login</h5>
                 <hr>
-                <input type="text" id="login" placeholder="Username" required>
-                <input type="password" id="password" placeholder="Password" required>
-                <button id="submitLogin">Login</button>
+                <form id="loginForm">
+                    <input type="email" id="login" placeholder="Email" required>
+                    <input type="password" id="password" placeholder="Password" required>
+                    <input type="submit" id="submitLogin" value="Login">
+                </form>
                 <h6 id="loginWarning"></h6>
 
                 <button id="loadSignup">
@@ -19,11 +20,9 @@ const login = () => {
         </div>`
     );
 };
-
-
-        
+ 
 const signup = () => {
-    console.log('signup')
+
     return (
         `<div class="col-12">
     
@@ -49,6 +48,7 @@ const signup = () => {
 };
 
 const menu = () => {
+
     return (
         `<div class="col-12">
 
@@ -77,6 +77,7 @@ const menu = () => {
 };
 
 const createPublic = () => {
+
     return (
         `<div class="col-12">
 
@@ -93,6 +94,7 @@ const createPublic = () => {
 };
  
 const connectPublic = () => {
+
     return (
         `<div class="col-12">
 
@@ -106,6 +108,7 @@ const connectPublic = () => {
 };
 
 const createPrivate = () => {
+
     return (
         `<div class="col-12">
 
@@ -123,6 +126,7 @@ const createPrivate = () => {
 }
 
 const setLobby = () => {
+    
     return (
         `<div class="col-12 scoreDiv">
             <div class="p1ScoreDiv">
@@ -173,25 +177,36 @@ const setLobby = () => {
     );
 };
 
-{/* <div class="mediaQ">
+const chatInit = () => {
 
-<div id="chatDiv">
-    <p id="chat1" class="seatWarmer"></p>
-    <p id="chat2" class="seatWarmer"></p>
-    <p id="chat3" class="seatWarmer"></p>
-    <p id="chat4" class="seatWarmer"></p>
-    <p id="chat5" class="seatWarmer"></p>
+    return (
+        `<div class="col-12">
+                   
+            <img src="imgs/rpsMainLogo.png" alt="logo" id="lobbyLogo">
+            
+            <div id="chatContainer">
 
-    <div id="inputDiv">
-        <input type="text" id="chatInput">
-        <button id="chatSubmit">Send</button>
-    </div>
+                <div id="chatDiv">
 
-</div>
-</div> */}
+                    <div id="msgContainer" data-count="0">
+                        
+                    </div>
+
+                    <div id="inputDiv">
+                        <input type="text" id="chatInput">
+                        <button id="chatSubmit">Send</button>
+                    </div>
+                    
+                </div>
+            </div>
+
+        </div>`
+    );
+};
 
 
 const connectPrivate = () => {
+
     return (
         `<div class="col-12">
 
@@ -207,63 +222,3 @@ const connectPrivate = () => {
         </div>`
     );
 };
-
-        
-//         lobby = {
-//             load: `
-//             <div class="row">
-        
-//             <div class="col-lg-12">
-//                 <h1 id="rpsHeader">Rock Paper Scissors</h1>
-//             </div>
-        
-//             </div>
-//             <div class="row">
-        
-//             <div class="col-lg-12">
-//                 <img src="imgs/rpsLogo.png" alt="logo" id="logo">
-//             </div>
-        
-//             <div id="loginDiv">
-//                 <input type="text" id="login" placeholder="Type your username...">
-//                 <button id="submit">Login</button>
-//                 <h6 id="loginWarning"></h6>
-//             </div>
-        
-//             </div>
-//             <div class="row">
-        
-            
-//             </div>
-        
-//             </div>`
-//         }
-//     }
-// }
-
-// export function login() {
-//     return (
-//         `<div class="row">
-            
-//         <div class="col-lg-12">
-//             <h1 id="rpsHeader">Rock Paper Scissors</h1>
-//         </div>
-    
-//         </div>
-//         <div class="row">
-    
-//         <div class="col-lg-12">
-//             <img src="imgs/rpsLogo.png" alt="logo" id="logo">
-//         </div>
-    
-//         <div id="loginDiv">
-//             <h5>Choose a username!</h5>
-//             <input type="text" id="login" placeholder="Username" required>
-//             <input type="password" id="password" placeholder="Password" required>
-//             <button id="submit">Login</button>
-//             <h6 id="loginWarning"></h6>
-//         </div>
-    
-//         </div>`
-//     )
-// };

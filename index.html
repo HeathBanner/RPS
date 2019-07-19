@@ -22,25 +22,28 @@
 <body>
     
     <div class="container-fluid">
-            <div class="row">
+            <div id="trunk" class="row">
         
-            <div class="col-lg-12">
-                <img src="imgs/rpsMainLogo.png" alt="logo" id="logo">
-            </div>
-            <!-- <button id="signout">SIGN OUT</button> -->
+                <div class="col-12">
+                   
+                    <img src="imgs/rpsMainLogo.png" alt="logo" id="logo">
+                    
+                </div>
+  
+                <!-- <button id="signout">SIGN OUT</button> -->
 
             </div>
-            <div id="root" class="row">
-
-               
+            <div id="root" class="row">                        
 
                 <div class="col-12">
                     <div id="loginDiv">
                         <h5>Login</h5>
                         <hr>
-                        <input type="email" id="login" placeholder="email" required>
-                        <input type="password" id="password" placeholder="Password" required>
-                        <button id="submitLogin">Login</button>
+                        <form id="loginForm">
+                            <input type="email" id="login" placeholder="Email" required>
+                            <input type="password" id="password" placeholder="Password" required>
+                            <input type="submit" id="submitLogin" value="Login">
+                        </form>
                         <h6 id="loginWarning"></h6>
             
                         <button id="loadSignup">
@@ -50,7 +53,6 @@
                 </div>
 
             </div>
-        
 
     </div>        
     

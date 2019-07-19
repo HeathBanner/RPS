@@ -17,10 +17,11 @@ const functions = firebase.functions();
 const usersRef = database.collection('users');
 const publicRef = database.collection('publicLobbies');
 const privateRef = database.collection('privateLobbies');
+const chatRef = database.collection('chat');
 
 const addPrivateListener = (name) => {
 
-    privateRef.doc(name).onSnapshot((snap) => {
+    privateRef.doc(name).onSnapshot(snap => {
         
         let info = snap.data();
 
@@ -76,19 +77,18 @@ const addPrivateListener = (name) => {
                 
                 $(`#btnTarget`).css({display: 'block'});
     
-                    privateRef.doc(name).update({
-                        'choices.playerOne': {choice: '', isChoosing: true},
-                        'choices.playerTwo': {choice: '', isChoosing: true}
-                    });
+                privateRef.doc(name).update({
+                    'choices.playerOne': {choice: '', isChoosing: true},
+                    'choices.playerTwo': {choice: '', isChoosing: true}
+                });
             }, 5000)
         }
     });   
-    
 };
 
 const addPublicListener = (name) => {
 
-    publicRef.doc(name).onSnapshot((snap) => {
+    publicRef.doc(name).onSnapshot(snap => {
         
         let info = snap.data();
 
@@ -101,23 +101,21 @@ const addPublicListener = (name) => {
             playerTwo: info.playerTwo
         };
 
+        playerJoin(info);
+        isChoosing(info);
+
         if((!info.p1Active)&&(info.playerOne)) {
 
-            playerJoin(info);
             publicRef.doc(name).update({
                 p1Active: true
             });
         }
         if((!info.p2Active)&&(info.playerTwo)) {
 
-            playerJoin(info);
             publicRef.doc(name).update({
                 p2Active: true
             });
         }
-        console.log(info);
-        isChoosing(info);
-
         if((playerOneChoice)&&(playerTwoChoice)) {
         
             $(`.p1Choice`).attr('src', `./imgs/${playerOneChoice.toLowerCase()}.png`);
@@ -148,30 +146,28 @@ const addPublicListener = (name) => {
                 
                 $(`#btnTarget`).css({display: 'block'});
     
-                    publicRef.doc(name).update({
-                        'choices.playerOne': {choice: '', isChoosing: true},
-                        'choices.playerTwo': {choice: '', isChoosing: true}
-                    });
+                publicRef.doc(name).update({
+                    'choices.playerOne': {choice: '', isChoosing: true},
+                    'choices.playerTwo': {choice: '', isChoosing: true}
+                });
             }, 5000)
         }
     });   
 };  
 
-//=========================================================//
+const addChatListener = (lobby) => {
+    
+    chatRef.doc(lobby).onSnapshot(snap => {
 
-firebase.firestore().collection('status').where('state', '==', 'online').onSnapshot((snapshot) => {
-    snapshot.docChanges().forEach((change) => {
-        if(change.type === 'added') {
-            let msg = `User ${change.doc.id} is online!`;
-            return console.log(msg);
-        }
-        if(change.type === 'removed') {
-            let msg = `User ${change.doc.id} is offline!`;
-            return console.log(msg);
-        }
+        let chatLog = snap.data().chatLog;
+
+        if(!chatLog) { return }
+
+        return newMsg(snap.data());
     });
-});
+};
 
+//=========================================================//
 
 const isOfflineForDatabase = {
     state: 'offline',
@@ -193,63 +189,51 @@ const isOnlineForFirestore = {
     last_changed: firebase.firestore.FieldValue.serverTimestamp(),
 };
 
-firebase.database().ref('.info/connected').on('value', function(snapshot) {
+firebase.database().ref('.info/connected').on('value', (snapshot => {
         
-    console.log(snapshot.val());
-        if(!firebase.auth().currentUser){return console.log('NOT UIID')}
-        
-        var uid = firebase.auth().currentUser.uid;
+    if(!firebase.auth().currentUser) { return }
     
-        const userStatusDatabaseRef = firebase.database().ref('/status/' + uid);
-        const userStatusFirestoreRef = firebase.firestore().doc('/status/' + uid);
-        
+    var uid = firebase.auth().currentUser.uid;
 
-        if (snapshot.val() == false) {
-            console.log('IS offLINE')
-            // userStatusDatabaseRef.set(isOfflineForDatabase)
-            userStatusFirestoreRef.set(isOfflineForFirestore);
-            return;
-        };
-    
-        userStatusDatabaseRef.onDisconnect().set(isOfflineForDatabase).then(() => {
-                
-            userStatusDatabaseRef.set(isOnlineForDatabase);
-            userStatusFirestoreRef.set(isOnlineForFirestore);
-        });
+    const userStatusDatabaseRef = firebase.database().ref('/status/' + uid);
+    const userStatusFirestoreRef = firebase.firestore().doc('/status/' + uid);
 
-        userStatusFirestoreRef.onSnapshot(function(doc) {
-            var isOnline = doc.data().state === 'online';
+    if (!snapshot.val()) {
+        return userStatusFirestoreRef.set(isOfflineForFirestore);  
+    };
 
-            console.log(isOnline);
-        });
+    userStatusDatabaseRef.onDisconnect().set(isOfflineForDatabase).then(() => {
+            
+        userStatusDatabaseRef.set(isOnlineForDatabase);
+        userStatusFirestoreRef.set(isOnlineForFirestore);
     });
+}));
     
-
-
-
 var ties = 0
 var playerOneWins = 0
 var playerTwoWins = 0
 
 //=========================================================//
 
-if (localStorage.getItem('user')) {
-    $("#login").val(localStorage.getItem('user'))
+if (localStorage.getItem('email')) {
+    $("#login").val(localStorage.getItem('email'))
 }
 
-$(document).on("click", '#submitLogin', () => {
+$(document).on("submit", '#loginForm', (e) => {
     
+    e.preventDefault();
+
     let login = $("#login").val().trim().replace(/\s/g, '');
     let password = $('#password').val().trim()
 
-    console.log('LOGIN', login, password);
-
     firebase.auth().signInWithEmailAndPassword(login, password).then(() => {
-        
+       
+        localStorage.setItem('email', login);
         $('#root').empty();
         return $('#root').append(menu());
-    })
-    .catch((error) => {
+
+    }).catch((error) => {
+
         if(error){
             return $('#loginWarning').text(error.message);
         }
@@ -266,37 +250,34 @@ $(document).on('click', '#signout', () => {
 });
 
 $(document).on("submit", '#signupForm', (e) => {
+    
     e.preventDefault();
-    let formData = $('#signupForm').serializeArray();
 
+    let formData = $('#signupForm').serializeArray();
     let username = formData[0].value;
     let email = formData[1].value;
     let password = formData[2].value;
 
-    console.log(username, email, password);
-
     if(username.length < 2){return $('#loginWarning').text('You must provide more than 1 character for your Username!');}
     if(password.length < 6){return $('#loginWarning').text('You must provide more than 1 character for your Password!');}
 
-    firebase.auth().createUserWithEmailAndPassword(email, password)
-    .then(() => {
+    firebase.auth().createUserWithEmailAndPassword(email, password).then(() => {
 
         let uid = firebase.auth().currentUser.uid;
-        localStorage.setItem('user', username);
+        localStorage.setItem('email', email);
+        localStorage.setItem('username', username);
 
         $('#root').empty();
         $('#root').append(login());
-        usersRef.doc(uid).set({username: username, password: password, email: email}, {merge: true});
+        usersRef.doc(uid).set({username: username, password: password, email: email});
     })
     .catch((error) => {
-        
-        if(error){console.log(error);return $('#loginWarning').text(error.message)};
+        if(error){return $('#loginWarning').text(error.message)};
     });
 });
 
 $(document).on('click', '#joinPublic', () => {
 
-    console.log('GET PUBLIC LOBBIES');
     publicRef.get().then((snap) => {
 
         snap.forEach((lobby) => {
@@ -306,19 +287,19 @@ $(document).on('click', '#joinPublic', () => {
 });
 
 $(document).on('click', '#submitPublic', () => {
+    
     let name = $('#lobbyName').val();
 
     if(name.length < 3) {
         return $('#lobbyWarning').text('The lobby name must be more than 3 characters!');
     }
 
-    publicRef.where('name', '==', name).get().then((snap) => {
+    publicRef.where('name', '==', name).get().then(snap => {
         
         if(!snap.empty) {
             return $('#lobbyWarning').text('A lobby already exists with that name!');
         }
         if(snap.empty) {
-            console.log('SETTING NEW LOBBY');
             
             let username = localStorage.getItem('user');
             let uid = firebase.auth().currentUser.uid;
@@ -327,6 +308,7 @@ $(document).on('click', '#submitPublic', () => {
             localStorage.setItem('openStatus', true);
 
             addPublicListener(name);
+            addChatListener(name);
             renderLobby();
             renderButtons();
 
@@ -336,6 +318,13 @@ $(document).on('click', '#submitPublic', () => {
                 public: true,
                 host: true,
             });
+
+            chatRef.doc(name).set({
+                name: name,
+                host: uid,
+                playerOne: username
+            });
+
             return publicRef.doc(name).set({
                 name: name,
                 full: false,
@@ -360,12 +349,13 @@ $(document).on('click', '.connectPublic', function() {
     let name = this.id;
     let username = localStorage.getItem('user');
 
-    publicRef.where('name', '==', name).get().then((lobby) => {
+    publicRef.where('name', '==', name).get().then(lobby => {
 
         if(lobby.empty) {
             return $('#lobbyWarning').text('No lobby was found with the information you provided');
         }
         if(!lobby.empty) {
+            
             lobby.forEach((info) => {
 
                 let lobbyInfo = info.data();
@@ -374,7 +364,7 @@ $(document).on('click', '.connectPublic', function() {
                     return $('#lobbyInfo').text(`Something appears to have broken :(`);
                 }
                 if(lobbyInfo.name === name) {
-                    console.log(info.data());
+                    
                     if(lobbyInfo.full) {
                         return $('#lobbyWarning').text('This lobby is already full!');
                     }
@@ -386,14 +376,23 @@ $(document).on('click', '.connectPublic', function() {
                         let uid = firebase.auth().currentUser.uid;
 
                         addPublicListener(name); 
+                        addChatListener(name);
                         renderLobby();
                         renderButtons();
+
                         usersRef.doc(uid).update({
                             lobby: name,
                             private: false,
                             public: true,
                             host: false,
                         });
+
+                        chatRef.doc(name).set({
+                            name: name,
+                            host: uid,
+                            playerTwo: username
+                        });
+
                         return publicRef.doc(name).update({
                             playerTwo: username,
                             full: true
@@ -417,13 +416,12 @@ $(document).on('click', '#submitPrivate', () => {
         return $('#lobbyWarning').text('The lobby password must be more than 6 characters!');
     }
 
-    privateRef.where('name', '==', name).get().then((snap) => {
+    privateRef.where('name', '==', name).get().then(snap => {
         
         if(!snap.empty) {
             return $('#lobbyWarning').text('A lobby already exists with that name!');
         }
         if(snap.empty) {
-            console.log('SETTING NEW LOBBY');
             
             let username = localStorage.getItem('user');
             let uid = firebase.auth().currentUser.uid;
@@ -432,14 +430,23 @@ $(document).on('click', '#submitPrivate', () => {
             localStorage.setItem('openStatus', false);
 
             addPrivateListener(name);
+            addChatListener(name);
             renderLobby();
             renderButtons();
+
             usersRef.doc(uid).update({
                 lobby: name,
                 private: true,
                 public: false,
                 host: true,
             });
+
+            chatRef.doc(name).set({
+                name: name,
+                host: uid,
+                playerOne: username
+            });
+
             return privateRef.doc(name).set({
                 name: name,
                 password: password,
@@ -461,16 +468,18 @@ $(document).on('click', '#submitPrivate', () => {
 });
  
 $(document).on('click', '#connectPrivate', () => {
+    
     let name = $('#lobbyName').val().trim();
     let password = $('#lobbyPass').val().trim();
     let username = localStorage.getItem('user');
 
-    privateRef.where('name', '==', name).get().then((lobby) => {
+    privateRef.where('name', '==', name).get().then(lobby => {
 
         if(lobby.empty) {
             return $('#lobbyWarning').text('No lobby was found with the information you provided');
         }
         if(!lobby.empty) {
+            
             lobby.forEach((info) => {
 
                 let lobbyInfo = info.data();
@@ -479,26 +488,33 @@ $(document).on('click', '#connectPrivate', () => {
                     return $('#lobbyInfo').text(`Password provided doesn't match`);
                 }
                 if(lobbyInfo.password === password) {
-                    console.log(info.data());
+                    
                     if(lobbyInfo.full) {
                         return $('#lobbyWarning').text('This lobby is already full!');
                     }
                     if(!lobbyInfo.full) {
+                        
+                        let uid = firebase.auth().currentUser.uid;
 
                         localStorage.setItem('lobby', name); 
                         localStorage.setItem('openStatus', false);
 
-                        let uid = firebase.auth().currentUser.uid;
-
                         addPrivateListener(name); 
+                        addChatListener(name);
                         renderLobby();
                         renderButtons();
+
                         usersRef.doc(uid).update({
                             lobby: name,
                             private: true,
                             public: false,
                             host: false,
                         });
+
+                        chatRef.doc(name).update({
+                            playerTwo: username
+                        });
+
                         return privateRef.doc(name).update({
                             playerTwo: username,
                             full: true
@@ -511,77 +527,76 @@ $(document).on('click', '#connectPrivate', () => {
 });
 
 $(document).on('click', '.btns', function() {
+    
     let playerChoice = this.id;
     let user = localStorage.getItem('user');
     let lobby = localStorage.getItem('lobby');
     let open = localStorage.getItem('openStatus');
 
-    console.log(open);
-    
     if(open === 'true') {
 
         publicRef.doc(lobby).get().then(snap => {
-            
-            console.log(snap.data());
-    
+
+            let playerOne = snap.data().playerOne;
+            let playerTwo = snap.data().playerTwo;
+                
             $("#btnTarget").css({display: 'none'});
             $("#chosen").text(`Waiting for other player's choice!`);
     
-            if((snap.data().playerOne)&&(snap.data().playerOne === user)) {
-                console.log('PLAYER ONE')
+            if((playerOne)&&(playerOne === user)) {
+
                 return publicRef.doc(lobby).update({
-                        'choices.playerOne': {
-                            isChoosing: false,
-                            username: user,
-                            choice: playerChoice.toUpperCase()
-                        }
+                    'choices.playerOne': {
+                        isChoosing: false,
+                        username: user,
+                        choice: playerChoice.toUpperCase()
+                    }
                 });
             }
-            if((snap.data().playerTwo)&&(snap.data().playerTwo === user)) {
-                console.log('PLAYERTWO')
+            if((playerTwo)&&(playerTwo === user)) {
+             
                 return publicRef.doc(lobby).update({
-                        'choices.playerTwo': {
-                            isChoosing: false,
-                            username: user,
-                            choice: playerChoice.toUpperCase()
-                        }
+                    'choices.playerTwo': {
+                        isChoosing: false,
+                        username: user,
+                        choice: playerChoice.toUpperCase()
+                    }
                 });
             }
         });
-
     }
     if(open === 'false') {
 
         privateRef.doc(lobby).get().then(snap => {
-            
-            console.log(snap.data());
-    
+
+            let playerOne = snap.data().playerOne;
+            let playerTwo = snap.data().playerTwo;
+                
             $("#btnTarget").css({display: 'none'});
             $("#chosen").text(`Waiting for other player's choice!`);
     
-            if((snap.data().playerOne)&&(snap.data().playerOne === user)) {
-                console.log('PLAYER ONE')
+            if((playerOne)&&(playerOne === user)) {
+
                 return privateRef.doc(lobby).update({
-                        'choices.playerOne': {
-                            isChoosing: false,
-                            username: user,
-                            choice: playerChoice.toUpperCase()
-                        }
+                    'choices.playerOne': {
+                        isChoosing: false,
+                        username: user,
+                        choice: playerChoice.toUpperCase()
+                    }
                 });
             }
-            if((snap.data().playerTwo)&&(snap.data().playerTwo === user)) {
-                console.log('PLAYERTWO')
+            if((playerTwo)&&(playerTwo === user)) {
+
                 return privateRef.doc(lobby).update({
-                        'choices.playerTwo': {
-                            isChoosing: false,
-                            username: user,
-                            choice: playerChoice.toUpperCase()
-                        }
+                    'choices.playerTwo': {
+                        isChoosing: false,
+                        username: user,
+                        choice: playerChoice.toUpperCase()
+                    }
                 });
             }
         });
     }
-
 });
 
 const rpsRules = (playerOneChoice, playerTwoChoice, users) => {
@@ -636,50 +651,39 @@ const rpsRules = (playerOneChoice, playerTwoChoice, users) => {
     }
 }
 
-// $(document).ready($(document).on("click", "#chatSubmit", function(){
+$(document).on('click', '#chatSubmit', () => {
+  
+    let msg = $('#chatInput').val();
+    let uid = firebase.auth().currentUser.uid;
+    let username = localStorage.getItem('user');
+    let lobby = localStorage.getItem('lobby');
     
-//     var input = $("#chatInput").val();
-//     chatLog.push(input);
+    chatRef.doc(lobby).get().then(snap => {
 
-//     chatRef.once('value').then(function(snap){
-//         var numberChildren = snap.numChildren();
-//         chatLog.update({
-//             logCount: numberChildren
-//         });
-    
-//         chatRef.update({
-//             [numberChildren]: `${localStorage.getItem('user')}: ${input}`
-//         });
-//     });
-//     $("#chatInput").val('');
-// }));
+        let chatLog = snap.data().chatLog;
 
-// chatRef.on('child_added', function(){
-    
-//     var numberChildren = 0
+        if(!chatLog) {
 
-//     chatRef.once('value').then(function(snapshot){
-        
-//         numberChildren = snapshot.numChildren()
-//         console.log(numberChildren)
+            return chatRef.doc(lobby).update({
+                chatLog: [{
+                    uid: uid,
+                    msg: msg,
+                    username: username
+                }]
+            });
+        } 
+        if(chatLog) {
 
-//         if (numberChildren <= 6) {
-            
-//             for (var i = numberChildren; i > 0; i-- ) {
-                
-//                 $('#chat' + i).text(snapshot.child(i).val())
-//                 console.log(snapshot.child(i).val())
-//             }
-//         }else if (numberChildren > 6) {
-            
-//             chatIndex = 6
-            
-//             for (var i = numberChildren; i >= numberChildren - 6; i--) {
-                    
-//                     $('#chat' + chatIndex).text(snapshot.child(i).val())
-//                     console.log(snapshot.child(i).val())
-//                     chatIndex--
-//             }
-//         }
-//     })
-// })
+            chatLog.push({
+                uid: uid,
+                msg: msg,
+                username: username,
+            });
+
+            return chatRef.doc(lobby).update({
+                chatLog: chatLog
+            });
+        }
+    });
+    $("#chatInput").val('');
+});

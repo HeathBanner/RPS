@@ -16,6 +16,7 @@ exports.onUserStatusChanged = functions.database.ref('/status/{userId}').onUpdat
     const usersRef = firestore.collection('/users');
     const privateRef = firestore.collection('/privateLobbies');
     const publicRef = firestore.collection('/publicLobbies');
+    const chatRef = firestore.collection('/chat');
 
     console.log(snapshot.after.val());
     console.log(context.params);
@@ -42,20 +43,21 @@ exports.onUserStatusChanged = functions.database.ref('/status/{userId}').onUpdat
 
             if(!info.lobby){return console.log('NOT LOBBY')}
 
-            if(info.host == true) {
-                if(info.private == true) {
+            if(info.host) {
+
+                chatRef.doc(info.lobby).delete();
+
+                if(info.private) {
                     console.log(`HOST PRIVATE`)
-                    return privateRef.doc(info.lobby).delete().then(() => {
-                    });
+                    return privateRef.doc(info.lobby).delete();
                 }
-                if(info.public == true) {
+                if(info.public) {
                     console.log(`HOST PUBLIC`)
-                    return publicRef.doc(info.lobby).delete().then(() => {
-                    });
+                    return publicRef.doc(info.lobby).delete();
                 }
             }
-            if(info.host == false) {
-                if(info.private == true) {
+            if(!info.host) {
+                if(info.private) {
                     console.log(`NO HOST PRIVATE`)
                     return privateRef.doc(info.lobby).update({
                         full: false,
@@ -63,7 +65,7 @@ exports.onUserStatusChanged = functions.database.ref('/status/{userId}').onUpdat
                         playerTwo: ''
                     });
                 }
-                if(info.public == true) {
+                if(info.public) {
                     console.log(`NO HOST PUBLIC`)
                     return publicRef.doc(info.lobby).update({
                         full: false,
