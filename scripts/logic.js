@@ -258,18 +258,19 @@ $(document).on("submit", '#signupForm', (e) => {
     let email = formData[1].value;
     let password = formData[2].value;
 
-    if(username.length < 2){return $('#loginWarning').text('You must provide more than 1 character for your Username!');}
-    if(password.length < 6){return $('#loginWarning').text('You must provide more than 1 character for your Password!');}
+    if(username.length < 2) {return $('#loginWarning').text('You must provide more than 1 character for your Username!');}
+    if(password.length < 6) {return $('#loginWarning').text('You must provide more than 1 character for your Password!');}
 
     firebase.auth().createUserWithEmailAndPassword(email, password).then(() => {
 
         let uid = firebase.auth().currentUser.uid;
         localStorage.setItem('email', email);
-        localStorage.setItem('username', username);
 
         $('#root').empty();
         $('#root').append(login());
-        usersRef.doc(uid).set({username: username, password: password, email: email});
+        usersRef.doc(uid).set({
+            username: username, password: password, email: email
+        });
     })
     .catch((error) => {
         if(error){return $('#loginWarning').text(error.message)};
@@ -301,44 +302,45 @@ $(document).on('click', '#submitPublic', () => {
         }
         if(snap.empty) {
             
-            let username = localStorage.getItem('user');
             let uid = firebase.auth().currentUser.uid;
 
-            localStorage.setItem('lobby', name); 
-            localStorage.setItem('openStatus', true);
+            usersRef.doc(uid).get().then(snapShot => {
 
-            addPublicListener(name);
-            addChatListener(name);
-            renderLobby();
-            renderButtons();
+                let username = snapShot.data().username;
 
-            usersRef.doc(uid).update({
-                lobby: name,
-                private: false,
-                public: true,
-                host: true,
-            });
-
-            chatRef.doc(name).set({
-                name: name,
-                host: uid,
-                playerOne: username
-            });
-
-            return publicRef.doc(name).set({
-                name: name,
-                full: false,
-                playerOne: username,
-                p1Active: false,
-                p2Active: false,
-                choices: {
-                    playerOne: {
-                        isChoosing: true
-                    },
-                    playerTwo: {
-                        isChoosing: true
+                addPublicListener(name);
+                addChatListener(name);
+                renderLobby();
+                renderButtons();
+    
+                usersRef.doc(uid).update({
+                    lobby: name,
+                    private: false,
+                    public: true,
+                    host: true,
+                });
+    
+                chatRef.doc(name).set({
+                    name: name,
+                    host: uid,
+                    playerOne: username
+                });
+    
+                return publicRef.doc(name).set({
+                    name: name,
+                    full: false,
+                    playerOne: username,
+                    p1Active: false,
+                    p2Active: false,
+                    choices: {
+                        playerOne: {
+                            isChoosing: true
+                        },
+                        playerTwo: {
+                            isChoosing: true
+                        }
                     }
-                }
+                });
             });
         }
     });
@@ -347,7 +349,7 @@ $(document).on('click', '#submitPublic', () => {
 $(document).on('click', '.connectPublic', function() {
 
     let name = this.id;
-    let username = localStorage.getItem('user');
+    let uid = firebase.auth().currentUser.uid;
 
     publicRef.where('name', '==', name).get().then(lobby => {
 
@@ -355,51 +357,54 @@ $(document).on('click', '.connectPublic', function() {
             return $('#lobbyWarning').text('No lobby was found with the information you provided');
         }
         if(!lobby.empty) {
-            
-            lobby.forEach((info) => {
 
-                let lobbyInfo = info.data();
+            usersRef.doc(uid).get(snap => {
 
-                if(lobbyInfo.name !== name) {
-                    return $('#lobbyInfo').text(`Something appears to have broken :(`);
-                }
-                if(lobbyInfo.name === name) {
-                    
-                    if(lobbyInfo.full) {
-                        return $('#lobbyWarning').text('This lobby is already full!');
+                let username = snap.data().username;
+
+                lobby.forEach((info) => {
+    
+                    let lobbyInfo = info.data();
+    
+                    if(lobbyInfo.name !== name) {
+                        return $('#lobbyInfo').text(`Something appears to have broken :(`);
                     }
-                    if(!lobbyInfo.full) {
-
-                        localStorage.setItem('lobby', name);
-                        localStorage.setItem('openStatus', true);
-
-                        let uid = firebase.auth().currentUser.uid;
-
-                        addPublicListener(name); 
-                        addChatListener(name);
-                        renderLobby();
-                        renderButtons();
-
-                        usersRef.doc(uid).update({
-                            lobby: name,
-                            private: false,
-                            public: true,
-                            host: false,
-                        });
-
-                        chatRef.doc(name).set({
-                            name: name,
-                            host: uid,
-                            playerTwo: username
-                        });
-
-                        return publicRef.doc(name).update({
-                            playerTwo: username,
-                            full: true
-                        });    
+                    if(lobbyInfo.name === name) {
+                        
+                        if(lobbyInfo.full) {
+                            return $('#lobbyWarning').text('This lobby is already full!');
+                        }
+                        if(!lobbyInfo.full) {
+    
+                            let uid = firebase.auth().currentUser.uid;
+    
+                            addPublicListener(name); 
+                            addChatListener(name);
+                            renderLobby();
+                            renderButtons();
+    
+                            usersRef.doc(uid).update({
+                                lobby: name,
+                                private: false,
+                                public: true,
+                                host: false,
+                            });
+    
+                            chatRef.doc(name).set({
+                                name: name,
+                                host: uid,
+                                playerTwo: username
+                            });
+    
+                            return publicRef.doc(name).update({
+                                playerTwo: username,
+                                full: true
+                            });    
+                        }
                     }
-                }
+                });
             });
+            
         }
     });
 });
@@ -423,46 +428,48 @@ $(document).on('click', '#submitPrivate', () => {
         }
         if(snap.empty) {
             
-            let username = localStorage.getItem('user');
             let uid = firebase.auth().currentUser.uid;
 
-            localStorage.setItem('lobby', name); 
-            localStorage.setItem('openStatus', false);
+            usersRef.doc(uid).get().then(snapShot => {
 
-            addPrivateListener(name);
-            addChatListener(name);
-            renderLobby();
-            renderButtons();
-
-            usersRef.doc(uid).update({
-                lobby: name,
-                private: true,
-                public: false,
-                host: true,
-            });
-
-            chatRef.doc(name).set({
-                name: name,
-                host: uid,
-                playerOne: username
-            });
-
-            return privateRef.doc(name).set({
-                name: name,
-                password: password,
-                full: false,
-                playerOne: username,
-                p1Active: false,
-                p2Active: false,
-                choices: {
-                    playerOne: {
-                        isChoosing: true
-                    },
-                    playerTwo: {
-                        isChoosing: true
+                let username = snapShot.data().username;
+                    
+                addPrivateListener(name);
+                addChatListener(name);
+                renderLobby();
+                renderButtons();
+    
+                usersRef.doc(uid).update({
+                    lobby: name,
+                    private: true,
+                    public: false,
+                    host: true,
+                });
+    
+                chatRef.doc(name).set({
+                    name: name,
+                    host: uid,
+                    playerOne: username
+                });
+    
+                return privateRef.doc(name).set({
+                    name: name,
+                    password: password,
+                    full: false,
+                    playerOne: username,
+                    p1Active: false,
+                    p2Active: false,
+                    choices: {
+                        playerOne: {
+                            isChoosing: true
+                        },
+                        playerTwo: {
+                            isChoosing: true
+                        }
                     }
-                }
+                });
             });
+
         }
     });
 });
@@ -471,7 +478,6 @@ $(document).on('click', '#connectPrivate', () => {
     
     let name = $('#lobbyName').val().trim();
     let password = $('#lobbyPass').val().trim();
-    let username = localStorage.getItem('user');
 
     privateRef.where('name', '==', name).get().then(lobby => {
 
@@ -479,49 +485,57 @@ $(document).on('click', '#connectPrivate', () => {
             return $('#lobbyWarning').text('No lobby was found with the information you provided');
         }
         if(!lobby.empty) {
-            
-            lobby.forEach((info) => {
 
-                let lobbyInfo = info.data();
+            let uid = firebase.auth().currentUser.uid;
 
-                if(lobbyInfo.password !== password) {
-                    return $('#lobbyInfo').text(`Password provided doesn't match`);
-                }
-                if(lobbyInfo.password === password) {
-                    
-                    if(lobbyInfo.full) {
-                        return $('#lobbyWarning').text('This lobby is already full!');
+            usersRef.doc(uid).get().then(snap => {
+
+                let username = snap.data().username;
+                
+                lobby.forEach((info) => {
+        
+                    let lobbyInfo = info.data();
+        
+                    if(lobbyInfo.password !== password) {
+                        return $('#lobbyInfo').text(`Password provided doesn't match`);
                     }
-                    if(!lobbyInfo.full) {
+                    if(lobbyInfo.password === password) {
                         
-                        let uid = firebase.auth().currentUser.uid;
-
-                        localStorage.setItem('lobby', name); 
-                        localStorage.setItem('openStatus', false);
-
-                        addPrivateListener(name); 
-                        addChatListener(name);
-                        renderLobby();
-                        renderButtons();
-
-                        usersRef.doc(uid).update({
-                            lobby: name,
-                            private: true,
-                            public: false,
-                            host: false,
-                        });
-
-                        chatRef.doc(name).update({
-                            playerTwo: username
-                        });
-
-                        return privateRef.doc(name).update({
-                            playerTwo: username,
-                            full: true
-                        });    
+                        if(lobbyInfo.full) {
+                            return $('#lobbyWarning').text('This lobby is already full!');
+                        }
+                        if(!lobbyInfo.full) {
+                            
+                            let uid = firebase.auth().currentUser.uid;
+        
+                            localStorage.setItem('lobby', name); 
+                            localStorage.setItem('openStatus', false);
+        
+                            addPrivateListener(name); 
+                            addChatListener(name);
+                            renderLobby();
+                            renderButtons();
+        
+                            usersRef.doc(uid).update({
+                                lobby: name,
+                                private: true,
+                                public: false,
+                                host: false,
+                            });
+        
+                            chatRef.doc(name).update({
+                                playerTwo: username
+                            });
+        
+                            return privateRef.doc(name).update({
+                                playerTwo: username,
+                                full: true
+                            });    
+                        }
                     }
-                }
+                });
             });
+
         }
     });
 });
@@ -529,74 +543,81 @@ $(document).on('click', '#connectPrivate', () => {
 $(document).on('click', '.btns', function() {
     
     let playerChoice = this.id;
-    let user = localStorage.getItem('user');
-    let lobby = localStorage.getItem('lobby');
-    let open = localStorage.getItem('openStatus');
 
-    if(open === 'true') {
+    let uid = firebase.auth().currentUser.uid;
 
-        publicRef.doc(lobby).get().then(snap => {
+    usersRef.doc(uid).get().then(snapShot => {
 
-            let playerOne = snap.data().playerOne;
-            let playerTwo = snap.data().playerTwo;
-                
-            $("#btnTarget").css({display: 'none'});
-            $("#chosen").text(`Waiting for other player's choice!`);
+        let username = snapShot.data().username;
+        let lobby = snapShot.data().lobby;
+        let open = snapShot.data().public;    
+
+        if(open) {
     
-            if((playerOne)&&(playerOne === user)) {
-
-                return publicRef.doc(lobby).update({
-                    'choices.playerOne': {
-                        isChoosing: false,
-                        username: user,
-                        choice: playerChoice.toUpperCase()
-                    }
-                });
-            }
-            if((playerTwo)&&(playerTwo === user)) {
-             
-                return publicRef.doc(lobby).update({
-                    'choices.playerTwo': {
-                        isChoosing: false,
-                        username: user,
-                        choice: playerChoice.toUpperCase()
-                    }
-                });
-            }
-        });
-    }
-    if(open === 'false') {
-
-        privateRef.doc(lobby).get().then(snap => {
-
-            let playerOne = snap.data().playerOne;
-            let playerTwo = snap.data().playerTwo;
-                
-            $("#btnTarget").css({display: 'none'});
-            $("#chosen").text(`Waiting for other player's choice!`);
+            publicRef.doc(lobby).get().then(snap => {
     
-            if((playerOne)&&(playerOne === user)) {
+                let playerOne = snap.data().playerOne;
+                let playerTwo = snap.data().playerTwo;
+                    
+                $("#btnTarget").css({display: 'none'});
+                $("#chosen").text(`Waiting for other player's choice!`);
+        
+                if((playerOne)&&(playerOne === username)) {
+    
+                    return publicRef.doc(lobby).update({
+                        'choices.playerOne': {
+                            isChoosing: false,
+                            username: username,
+                            choice: playerChoice.toUpperCase()
+                        }
+                    });
+                }
+                if((playerTwo)&&(playerTwo === username)) {
+                 
+                    return publicRef.doc(lobby).update({
+                        'choices.playerTwo': {
+                            isChoosing: false,
+                            username: username,
+                            choice: playerChoice.toUpperCase()
+                        }
+                    });
+                }
+            });
+        }
+        if(!open) {
+    
+            privateRef.doc(lobby).get().then(snap => {
+    
+                let playerOne = snap.data().playerOne;
+                let playerTwo = snap.data().playerTwo;
+                    
+                $("#btnTarget").css({display: 'none'});
+                $("#chosen").text(`Waiting for other player's choice!`);
+        
+                if((playerOne)&&(playerOne === username)) {
+    
+                    return privateRef.doc(lobby).update({
+                        'choices.playerOne': {
+                            isChoosing: false,
+                            username: username,
+                            choice: playerChoice.toUpperCase()
+                        }
+                    });
+                }
+                if((playerTwo)&&(playerTwo === username)) {
+    
+                    return privateRef.doc(lobby).update({
+                        'choices.playerTwo': {
+                            isChoosing: false,
+                            username: username,
+                            choice: playerChoice.toUpperCase()
+                        }
+                    });
+                }
+            });
+        }
+    });
 
-                return privateRef.doc(lobby).update({
-                    'choices.playerOne': {
-                        isChoosing: false,
-                        username: user,
-                        choice: playerChoice.toUpperCase()
-                    }
-                });
-            }
-            if((playerTwo)&&(playerTwo === user)) {
-
-                return privateRef.doc(lobby).update({
-                    'choices.playerTwo': {
-                        isChoosing: false,
-                        username: user,
-                        choice: playerChoice.toUpperCase()
-                    }
-                });
-            }
-        });
-    }
 });
 
 const rpsRules = (playerOneChoice, playerTwoChoice, users) => {
@@ -655,35 +676,39 @@ $(document).on('click', '#chatSubmit', () => {
   
     let msg = $('#chatInput').val();
     let uid = firebase.auth().currentUser.uid;
-    let username = localStorage.getItem('user');
-    let lobby = localStorage.getItem('lobby');
+
+    usersRef.doc(uid).get().then(snapShot => {
+
+        let username = snapShot.data().username;
+        let lobby = snapShot.data().lobby;    
+
+        chatRef.doc(lobby).get().then(snap => {
     
-    chatRef.doc(lobby).get().then(snap => {
-
-        let chatLog = snap.data().chatLog;
-
-        if(!chatLog) {
-
-            return chatRef.doc(lobby).update({
-                chatLog: [{
+            let chatLog = snap.data().chatLog;
+    
+            if(!chatLog) {
+    
+                return chatRef.doc(lobby).update({
+                    chatLog: [{
+                        uid: uid,
+                        msg: msg,
+                        username: username
+                    }]
+                });
+            } 
+            if(chatLog) {
+    
+                chatLog.push({
                     uid: uid,
                     msg: msg,
-                    username: username
-                }]
-            });
-        } 
-        if(chatLog) {
-
-            chatLog.push({
-                uid: uid,
-                msg: msg,
-                username: username,
-            });
-
-            return chatRef.doc(lobby).update({
-                chatLog: chatLog
-            });
-        }
+                    username: username,
+                });
+    
+                return chatRef.doc(lobby).update({
+                    chatLog: chatLog
+                });
+            }
+        });
     });
     $("#chatInput").val('');
 });

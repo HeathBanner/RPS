@@ -4,7 +4,7 @@
 
 The Rock Paper Scissor game has finally been completed!
 
-YOU MUST HAVE LOCAL STORAGE ENABLED!
+No need for local storage now :D
 
 Tomorrow (July 19, 2019) I will add responsiveness.
 
