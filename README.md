@@ -8,8 +8,6 @@ Of course, a game isn't complete without a form of communication. To the top rig
 
 I wanted to better understand real-time databases and sharpen my skills with JQuery including the basics (HTML, CSS). My love for React JS also gave me the idea of training my DOM manipulation skills.
 
-## Build Status
-
 
 ## Code Style
 
