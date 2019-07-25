@@ -1,3 +1,7 @@
 language: node_js
 node_js:
   - "stable"
+install:
+  - git config user.email "heathbanner@outlook.com"
+  - git config user.name "HeathBanner"
+  
