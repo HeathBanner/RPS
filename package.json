@@ -4,7 +4,7 @@
   "description": "RPS is a Rock Paper Scissor game that uses a real-time database. The user must first signup then login with their new account. Once logged in they will have four options. Create either a public or private lobby, or join a previously created private or public lobby. When both players have joined, they can then choose between Rock, Paper or Scissor. After the players have selected their \"move\", the application will then decide the winner and increment the points appropriately.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Seems to be okay\" && exit 1"
+    "test": "npm test"
   },
   "repository": {
     "type": "git",
