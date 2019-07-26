@@ -30,6 +30,11 @@ $(document).ready(() => {
         $('#root').empty();
         $('#root').append(connectPrivate());
     });
+
+    $(document).on('click', '#menu', () => {
+        $('#root').empty();
+        return $('#root').append(menu());
+    });
 });
 
 const lobbyInput = (lobby) => {

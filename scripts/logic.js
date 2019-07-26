@@ -202,7 +202,8 @@ firebase.database().ref('.info/connected').on('value', (snapshot => {
         return userStatusFirestoreRef.set(isOfflineForFirestore);  
     };
 
-    userStatusDatabaseRef.onDisconnect().set(isOfflineForDatabase).then(() => {
+    userStatusDatabaseRef.onDisconnect().set(isOfflineForDatabase)
+    .then(() => {
             
         userStatusDatabaseRef.set(isOnlineForDatabase);
         userStatusFirestoreRef.set(isOnlineForFirestore);
@@ -226,7 +227,8 @@ $(document).on("submit", '#loginForm', (e) => {
     let login = $("#login").val().trim().replace(/\s/g, '');
     let password = $('#password').val().trim()
 
-    firebase.auth().signInWithEmailAndPassword(login, password).then(() => {
+    firebase.auth().signInWithEmailAndPassword(login, password)
+    .then(() => {
        
         localStorage.setItem('email', login);
         $('#root').empty();
@@ -234,14 +236,15 @@ $(document).on("submit", '#loginForm', (e) => {
 
     }).catch((error) => {
 
-        if(error){
+        if(error) {
             return $('#loginWarning').text(error.message);
         }
     });
 });
 
 $(document).on('click', '#signout', () => {
-    firebase.auth().signOut().then(() => {
+    firebase.auth().signOut()
+    .then(() => {
         console.log('signed out');
     })
     .catch((error) => {
@@ -261,7 +264,8 @@ $(document).on("submit", '#signupForm', (e) => {
     if(username.length < 2) {return $('#loginWarning').text('You must provide more than 1 character for your Username!');}
     if(password.length < 6) {return $('#loginWarning').text('You must provide more than 1 character for your Password!');}
 
-    firebase.auth().createUserWithEmailAndPassword(email, password).then(() => {
+    firebase.auth().createUserWithEmailAndPassword(email, password)
+    .then(() => {
 
         let uid = firebase.auth().currentUser.uid;
         localStorage.setItem('email', email);
@@ -295,7 +299,8 @@ $(document).on('click', '#submitPublic', () => {
         return $('#lobbyWarning').text('The lobby name must be more than 3 characters!');
     }
 
-    publicRef.where('name', '==', name).get().then(snap => {
+    publicRef.where('name', '==', name).get()
+    .then(snap => {
         
         if(!snap.empty) {
             return $('#lobbyWarning').text('A lobby already exists with that name!');
@@ -351,7 +356,8 @@ $(document).on('click', '.connectPublic', function() {
     let name = this.id;
     let uid = firebase.auth().currentUser.uid;
 
-    publicRef.where('name', '==', name).get().then(lobby => {
+    publicRef.where('name', '==', name).get()
+    .then(lobby => {
 
         if(lobby.empty) {
             return $('#lobbyWarning').text('No lobby was found with the information you provided');
@@ -421,7 +427,8 @@ $(document).on('click', '#submitPrivate', () => {
         return $('#lobbyWarning').text('The lobby password must be more than 6 characters!');
     }
 
-    privateRef.where('name', '==', name).get().then(snap => {
+    privateRef.where('name', '==', name).get()
+    .then(snap => {
         
         if(!snap.empty) {
             return $('#lobbyWarning').text('A lobby already exists with that name!');
@@ -479,7 +486,8 @@ $(document).on('click', '#connectPrivate', () => {
     let name = $('#lobbyName').val().trim();
     let password = $('#lobbyPass').val().trim();
 
-    privateRef.where('name', '==', name).get().then(lobby => {
+    privateRef.where('name', '==', name).get()
+    .then(lobby => {
 
         if(lobby.empty) {
             return $('#lobbyWarning').text('No lobby was found with the information you provided');
@@ -554,7 +562,8 @@ $(document).on('click', '.btns', function() {
 
         if(open) {
     
-            publicRef.doc(lobby).get().then(snap => {
+            publicRef.doc(lobby).get()
+            .then(snap => {
     
                 let playerOne = snap.data().playerOne;
                 let playerTwo = snap.data().playerTwo;
@@ -586,7 +595,8 @@ $(document).on('click', '.btns', function() {
         }
         if(!open) {
     
-            privateRef.doc(lobby).get().then(snap => {
+            privateRef.doc(lobby).get()
+            .then(snap => {
     
                 let playerOne = snap.data().playerOne;
                 let playerTwo = snap.data().playerTwo;

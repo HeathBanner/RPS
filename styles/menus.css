@@ -104,12 +104,31 @@ hr {
     color: white;
 }
 
+#menu {
+    /* position: absolute;
+    top: 10px;
+    left: 10px; */
+    cursor: pointer;
+    color: #373ced;
+}
+
+#menu:hover {
+    color: #565bf1
+}
+
+#menuOffset {
+    position: absolute;
+    top: 20px;
+    left: 30px;
+    width: 100%;
+}
 
 
 /* LOBBY CREATION */
 
 
 #lobbyCreation {
+    position: relative;
     width: 450px;
     margin: 40px auto 0px auto;
     padding: 15px 30px;
@@ -141,6 +160,7 @@ hr {
 #lobbyCreation > button {
     background: linear-gradient(45deg, #373ced 30%, #262bc7 90%);
     color: white;
+    margin-bottom: 15px;
 }
 
 #lobbyCreation > button:hover {
@@ -158,6 +178,7 @@ hr {
 
 
 #connectContainer {
+    position: relative;
     width: 450px;
     margin: 40px auto 0px auto;
     padding: 15px 30px;
@@ -171,7 +192,7 @@ hr {
 }
 
 #connectContainer > h5 {
-    font-size: 1.6rem;
+    font-size: 1.8rem;
     color: white;
     margin-top: 5px;
 }
@@ -203,6 +224,7 @@ hr {
 
 
 #lobbyContainer {
+    position: relative;
     width: 450px;
     border-radius: 4px;
     margin: 40px auto;
@@ -215,7 +237,9 @@ hr {
     flex-wrap: wrap;
 }
 
-#lobbyContainer > h4 {
+#lobbyContainer > h5 {
+    margin-top: 5px;
+    font-size: 1.8rem;
     color: white;
 }
 
