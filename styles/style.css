@@ -1,6 +1,4 @@
-
-
-body{
+body {
     font-family: 'Roboto', sans-serif;
     font-size: 1.2rem;
     background: linear-gradient(45deg, #d4fbff 30%, #b0f8ff 90%);
@@ -39,9 +37,7 @@ body{
 #chatDiv {    
     width: 50%;
     margin: 20px 0px;
-    /* border: solid 4px black; */
     border-radius: 5px;
-    /* background-image: url(../imgs/skulls.png); */
     background: linear-gradient(45deg, #ffffff 30%, #fff1f1 90%);
     box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 5px 0px rgba(0,0,0,0.14), 0px 1px 10px 0px rgba(0,0,0,0.12);
 }
@@ -51,7 +47,6 @@ body{
     overflow: scroll;
     background-color: #fff;
     border-radius: 4px;
-    /* padding-top: 10px; */
 }
 
 .msg {
@@ -220,5 +215,3 @@ body{
         margin: 20px 10px 0px 0px;
     }
 }
-
-

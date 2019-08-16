@@ -1,6 +1,5 @@
 
 const login = () => {
-
     return (
         `<div class="col-12">
 
@@ -31,7 +30,6 @@ const login = () => {
 };
  
 const signup = () => {
-
     return (
         `<div class="col-12">
     
@@ -64,7 +62,6 @@ const signup = () => {
 };
 
 const menu = () => {
-
     return (
         `<div class="col-12">
 
@@ -93,7 +90,6 @@ const menu = () => {
 };
 
 const createPublic = () => {
-
     return (
         `<div class="col-12">
 
@@ -121,7 +117,6 @@ const createPublic = () => {
 };
  
 const connectPublic = () => {
-
     return (
         `<div class="col-12">
 
@@ -144,7 +139,6 @@ const connectPublic = () => {
 };
 
 const createPrivate = () => {
-
     return (
         `<div class="col-12">
 
@@ -172,7 +166,6 @@ const createPrivate = () => {
 };
 
 const connectPrivate = () => {
-
     return (
         `<div class="col-12">
 
@@ -201,7 +194,6 @@ const connectPrivate = () => {
 };
 
 const setLobby = () => {
-    
     return (
         `<div class="col-12 scoreDiv">
 
@@ -269,7 +261,6 @@ const setLobby = () => {
 };
 
 const chatInit = () => {
-
     return (
         `<div class="col-12">
                    
